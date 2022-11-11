@@ -1,49 +1,76 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/HomeScreen";
-import { Provider as PaperProvider } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useTheme } from "react-native-paper";
+import {
+	Provider as PaperProvider,
+	DefaultTheme,
+	useTheme,
+	ThemeBase,
+} from "react-native-paper";
+import { useState } from "react";
+import LoginScreen from "./screens/LoginScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// export default function App() {
-// 	return (
-// 		<PaperProvider>
-// 			<NavigationContainer>
-// 				<Stack.Navigator>
-// 					<Stack.Screen name="Home" component={HomeScreen} />
-// 				</Stack.Navigator>
-// 			</NavigationContainer>
-// 		</PaperProvider>
-// 	);
-// }
+declare global {
+	namespace ReactNativePaper {
+		interface ThemeColors {
+			dark: string;
+			ligth: string;
+		}
+
+		// interface Theme {
+		// 	myOwnProperty: boolean;
+		// }
+	}
+}
+
+const theme = {
+	...DefaultTheme,
+	// Specify custom property
+	// myOwnProperty: true,
+	// Specify custom property in nested object
+	colors: {
+		...DefaultTheme.colors,
+		dark: "#000022",
+		ligth: "#FDFDFD",
+		// primary: "#000000",
+		// secondary: "#ffffff",
+	},
+};
 
 export default function App() {
-	const { colors } = useTheme();
+	const [loggedIn]= useState(false);
+
+
 	return (
-		<PaperProvider>
+		<PaperProvider theme={theme}>
 			<NavigationContainer>
-				<Tab.Navigator>
-					<Tab.Screen
-						name="Home"
-						component={HomeScreen}
-						options={{
-							tabBarIcon: ({ size }) => (
-								<MaterialCommunityIcons
-									name="home"
-									color={colors.primary}
-									size={size}
-								/>
-							),
-							tabBarLabel: () => null,
-						}}
-					/>
-				</Tab.Navigator>
+				{loggedIn ? (
+					<Tab.Navigator>
+						<Tab.Screen
+							name="Home"
+							component={HomeScreen}
+							options={{
+								tabBarIcon: ({ size }) => (
+									<MaterialCommunityIcons
+										name="home"
+										color={theme.colors.primary}
+										size={size}
+									/>
+								),
+								tabBarLabel: () => null,
+							}}
+						/>
+					</Tab.Navigator>
+				) : (
+					<LoginScreen />
+				)}
 			</NavigationContainer>
 		</PaperProvider>
 	);
