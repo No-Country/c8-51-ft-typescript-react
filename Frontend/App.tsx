@@ -45,8 +45,7 @@ const theme = {
 };
 
 export default function App() {
-	const [loggedIn]= useState(false);
-
+	const [loggedIn] = useState(true);
 
 	return (
 		<PaperProvider theme={theme}>
@@ -65,6 +64,7 @@ export default function App() {
 									/>
 								),
 								tabBarLabel: () => null,
+								headerShown: false,
 							}}
 						/>
 					</Tab.Navigator>
