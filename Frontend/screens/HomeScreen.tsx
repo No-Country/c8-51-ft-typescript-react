@@ -147,8 +147,18 @@ const FavsCoinsComponent = () => {
 function Home(props) {
 	const { colors } = props.theme;
 	const [searchQuery, setSearchQuery] = useState("");
+	const [allCoins, setAllCoins] = useState(cryptoJson);
 
-	const onChangeSearch = (query) => setSearchQuery(query);
+	const onChangeSearch = (query) => {
+		setSearchQuery(query);
+		setAllCoins(
+			cryptoJson.filter(
+				(item) =>
+					item.name.toLowerCase().includes(query.toLowerCase()) ||
+					item.symbol.toLowerCase().includes(query.toLowerCase()),
+			),
+		);
+	};
 
 	return (
 		<>
@@ -162,14 +172,12 @@ function Home(props) {
 				<View style={{ height: "100%" }}>
 					<Tab.Navigator>
 						<Tab.Screen name="All">
-							{() => (
-								<AllCoinsComponent items={cryptoJson} theme={props.theme} />
-							)}
+							{() => <AllCoinsComponent items={allCoins} theme={props.theme} />}
 						</Tab.Screen>
 						<Tab.Screen name="Favs">
 							{() => (
 								<AllCoinsComponent
-									items={cryptoJson.filter((item) => item.fav)}
+									items={allCoins.filter((item) => item.fav)}
 									theme={props.theme}
 								/>
 							)}
