@@ -41,6 +41,7 @@ const cryptoJson = [
 const AllCoinsComponent = (props) => {
 	const { colors } = props.theme;
 	const { items } = props;
+	const { favCallback } = props;
 	return (
 		<View style={{ height: "100%", backgroundColor: colors.background }}>
 			<Surface
@@ -122,11 +123,11 @@ const AllCoinsComponent = (props) => {
 							}
 						>
 							<MaterialCommunityIcons
-								name="star-outline"
+								name={item.fav ? "star" : "star-outline"}
 								// icon="star-outline"
 								// color={colors.text}
 								size={20}
-								onPress={() => console.log("Pressed")}
+								onPress={() => favCallback(item.symbol)}
 							/>
 						</View>
 					</Surface>
@@ -136,18 +137,20 @@ const AllCoinsComponent = (props) => {
 	);
 };
 
-const FavsCoinsComponent = () => {
-	return (
-		<View>
-			<Text>allCoinsComponent</Text>
-		</View>
-	);
-};
-
 function Home(props) {
 	const { colors } = props.theme;
 	const [searchQuery, setSearchQuery] = useState("");
 	const [allCoins, setAllCoins] = useState(cryptoJson);
+
+	const favCallback = (symbol) => {
+		const newAllCoins = allCoins.map((item) => {
+			if (item.symbol === symbol) {
+				item.fav = !item.fav;
+			}
+			return item;
+		});
+		setAllCoins(newAllCoins);
+	};
 
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);
@@ -172,13 +175,20 @@ function Home(props) {
 				<View style={{ height: "100%" }}>
 					<Tab.Navigator>
 						<Tab.Screen name="All">
-							{() => <AllCoinsComponent items={allCoins} theme={props.theme} />}
+							{() => (
+								<AllCoinsComponent
+									items={allCoins}
+									theme={props.theme}
+									favCallback={favCallback}
+								/>
+							)}
 						</Tab.Screen>
 						<Tab.Screen name="Favs">
 							{() => (
 								<AllCoinsComponent
 									items={allCoins.filter((item) => item.fav)}
 									theme={props.theme}
+                  favCallback={favCallback}
 								/>
 							)}
 						</Tab.Screen>
