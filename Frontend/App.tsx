@@ -38,11 +38,14 @@ const theme = {
 	colors: {
 		...DefaultTheme.colors,
 		dark: "#000022",
-		ligth: "#FDFDFD",
+		light: "#FDFDFD",
+		text: '#000',
 		// primary: "#000000",
 		// secondary: "#ffffff",
 	},
 };
+
+export type Theme = typeof theme;
 
 export default function App() {
 	const [loggedIn] = useState(true);
