@@ -1,151 +1,57 @@
-import { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
 import {
 	Button,
 	Searchbar,
 	withTheme,
 	Surface,
 	IconButton,
-} from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+	useTheme,
+} from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { Theme } from '../App';
+import { ICoin } from '../types';
+import CryptoList from '../components/CryptoList';
 
 const Tab = createMaterialTopTabNavigator();
-// import BottomNav from "../components/BottomNav";
-const cryptoJson = [
+// import BottomNav from '../components/BottomNav';
+const cryptoJson: ICoin[] = [
 	{
-		name: "Bitcoin",
-		symbol: "BTC",
+		name: 'Bitcoin',
+		symbol: 'BTC',
 		price: 15100.12,
 		change24h: 10.5,
-		fav: true,
+		isFav: true,
 	},
 	{
-		name: "Ethereum",
-		symbol: "ETH",
+		name: 'Ethereum',
+		symbol: 'ETH',
 		price: 400.51,
 		change24h: -2.5,
-		fav: false,
+		isFav: false,
 	},
 	{
-		name: "Litecoin",
-		symbol: "LTC",
+		name: 'Litecoin',
+		symbol: 'LTC',
 		price: 100,
 		change24h: 0.5,
-		fav: false,
+		isFav: false,
 	},
 ];
 
-const AllCoinsComponent = (props) => {
-	const { colors } = props.theme;
-	const { items } = props;
-	const { favCallback } = props;
-	return (
-		<View style={{ height: "100%", backgroundColor: colors.background }}>
-			<Surface
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-between",
-					alignItems: "center",
-					padding: 10,
-					backgroundColor: colors.background,
-					// borderBottomWidth: 1,
-					// borderBottomColor: colors.border,
-				}}
-			>
-				<Text style={{ color: colors.text, width: 50 }}>Name</Text>
-				<Text style={{ color: colors.text, width: 80 }}>Price</Text>
-				<Text style={{ color: colors.text }}>24h</Text>
-				<Text style={{ color: colors.text }}>Favs</Text>
-			</Surface>
-			{items.map((item) => {
-				{
-					var bg = item.change24h > 0 ? "green" : "red";
-				}
-				return (
-					<Surface
-						key={item.symbol}
-						style={{
-							flexDirection: "row",
-							justifyContent: "space-between",
-							alignItems: "center",
-							padding: 10,
-						}}
-					>
-						<View style={{ flex: 0, flexDirection: "column", width: 50 }}>
-							<Text style={{ color: colors.text, fontSize: 16 }}>
-								{item.symbol}/{" "}
-							</Text>
-							<Text
-								style={{
-									color: colors.text,
-									fontSize: 8,
-									fontWeight: "normal",
-								}}
-							>
-								USDT
-							</Text>
-						</View>
-						<View style={{ width: 80 }}>
-							<Text style={{ color: colors.text, fontSize: 16 }}>
-								${item.price}
-							</Text>
-						</View>
-						<View
-							style={{
-								padding: 5,
-								flexDirection: "row",
-								alignItems: "center",
-								backgroundColor: bg,
-								width: 60,
-								justifyContent: "center",
-							}}
-						>
-							<Text
-								style={{
-									color: colors.text,
-									fontSize: 12,
-								}}
-							>
-								{bg === "green" ? "+" : ""}
-								{item.change24h}%
-							</Text>
-						</View>
-						<View
-							style={
-								{
-									// flex: 0,
-									// padding:0,
-									// alignSelf: "flex-end",
-								}
-							}
-						>
-							<MaterialCommunityIcons
-								name={item.fav ? "star" : "star-outline"}
-								// icon="star-outline"
-								// color={colors.text}
-								size={20}
-								onPress={() => favCallback(item.symbol)}
-							/>
-						</View>
-					</Surface>
-				);
-			})}
-		</View>
-	);
-};
+
 
 function Home(props) {
-	const { colors } = props.theme;
-	const [searchQuery, setSearchQuery] = useState("");
+	const theme = useTheme<Theme>();
+	const [searchQuery, setSearchQuery] = useState('');
 	const [allCoins, setAllCoins] = useState(cryptoJson);
 
-	const favCallback = (symbol) => {
+	const isFavCallback = (symbol: string) => {
 		const newAllCoins = allCoins.map((item) => {
 			if (item.symbol === symbol) {
-				item.fav = !item.fav;
+				item.isFav = !item.isFav;
 			}
 			return item;
 		});
@@ -165,32 +71,26 @@ function Home(props) {
 
 	return (
 		<>
-			<SafeAreaView style={{ flex: 1, backgroundColor: colors.ligth }}>
+			<SafeAreaView style={{ ...styles.container, backgroundColor: theme.colors.light }}>
 				<Searchbar
-					placeholder="Search"
+					placeholder='Search'
 					onChangeText={onChangeSearch}
 					value={searchQuery}
-					style={{ margin: 10, borderRadius: 40, height: 40 }}
+					style={styles.search}
 				/>
-				<View style={{ height: "100%" }}>
+				<View style={styles.containerContainer}>
 					<Tab.Navigator>
-						<Tab.Screen name="All">
-							{() => (
-								<AllCoinsComponent
-									items={allCoins}
-									theme={props.theme}
-									favCallback={favCallback}
-								/>
-							)}
+						<Tab.Screen name='All'>
+							{() => <CryptoList
+								items={allCoins}
+								isFavCallback={isFavCallback}
+							/>}
 						</Tab.Screen>
-						<Tab.Screen name="Favs">
-							{() => (
-								<AllCoinsComponent
-									items={allCoins.filter((item) => item.fav)}
-									theme={props.theme}
-                  favCallback={favCallback}
-								/>
-							)}
+						<Tab.Screen name='Favs'>
+							{() => <CryptoList
+								items={allCoins.filter((item) => item.isFav)}
+								isFavCallback={isFavCallback}
+							/>}
 						</Tab.Screen>
 					</Tab.Navigator>
 				</View>
@@ -201,11 +101,10 @@ function Home(props) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
+		flex: 1
 	},
+	search: { margin: 10, borderRadius: 40, height: 40 },
+	containerContainer: { height: '100%' }
 });
 
 export default withTheme(Home);
