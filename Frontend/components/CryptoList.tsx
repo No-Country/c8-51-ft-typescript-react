@@ -70,7 +70,6 @@ export default function CryptoList(props: IProps) {
                 <View>
                     <MaterialCommunityIcons
                         name={coin.isFav ? 'star' : 'star-outline'}
-                        // icon='star-outline'
                         color={coin.isFav ? 'orange' : 'black'}
                         size={20}
                         onPress={() => isFavCallback(coin.symbol)}

@@ -6,84 +6,101 @@ import HomeScreen from "./screens/HomeScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
-	Provider as PaperProvider,
-	DefaultTheme,
-	useTheme,
-	ThemeBase,
+  Provider as PaperProvider,
+  DefaultTheme,
+  useTheme,
+  ThemeBase,
 } from "react-native-paper";
 import { useState } from "react";
 import LoginScreen from "./screens/LoginScreen";
+import NewsScreen from "./screens/NewsScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 declare global {
-	namespace ReactNativePaper {
-		interface ThemeColors {
-			dark: string;
-			ligth: string;
-		}
+  namespace ReactNativePaper {
+    interface ThemeColors {
+      dark: string;
+      ligth: string;
+    }
 
-		// interface Theme {
-		// 	myOwnProperty: boolean;
-		// }
-	}
+    // interface Theme {
+    // 	myOwnProperty: boolean;
+    // }
+  }
 }
 
 const theme = {
-	...DefaultTheme,
-	// Specify custom property
-	// myOwnProperty: true,
-	// Specify custom property in nested object
-	colors: {
-		...DefaultTheme.colors,
-		dark: "#000022",
-		light: "#FDFDFD",
-		text: '#000',
-		// primary: "#000000",
-		// secondary: "#ffffff",
-	},
+  ...DefaultTheme,
+  // Specify custom property
+  // myOwnProperty: true,
+  // Specify custom property in nested object
+  colors: {
+    ...DefaultTheme.colors,
+    dark: "#000022",
+    light: "#FDFDFD",
+    text: '#000',
+    // primary: "#000000",
+    // secondary: "#ffffff",
+  },
 };
 
 export type Theme = typeof theme;
 
 export default function App() {
-	const [loggedIn] = useState(true);
+  const [loggedIn] = useState(true);
 
-	return (
-		<PaperProvider theme={theme}>
-			<NavigationContainer>
-				{loggedIn ? (
-					<Tab.Navigator>
-						<Tab.Screen
-							name="Home"
-							component={HomeScreen}
-							options={{
-								tabBarIcon: ({ size }) => (
-									<MaterialCommunityIcons
-										name="home"
-										color={theme.colors.primary}
-										size={size}
-									/>
-								),
-								tabBarLabel: () => null,
-								headerShown: false,
-							}}
-						/>
-					</Tab.Navigator>
-				) : (
-					<LoginScreen />
-				)}
-			</NavigationContainer>
-		</PaperProvider>
-	);
+  return (
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        {loggedIn ? (
+          <Tab.Navigator>
+
+            <Tab.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                tabBarLabel: () => null,
+                headerShown: false,
+                tabBarIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="home"
+                    color={theme.colors.primary}
+                    size={size}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="News"
+              component={NewsScreen}
+              options={{
+                tabBarLabel: () => null,
+                headerShown: false,
+                tabBarIcon: ({ color, size }) => (
+                  <MaterialCommunityIcons
+                    name="newspaper-variant-outline"
+                    color={theme.colors.primary}
+                    size={size}
+                  />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        ) : (
+          <LoginScreen />
+        )}
+      </NavigationContainer>
+    </PaperProvider>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
