@@ -23,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { AppbarHeader } from "react-native-paper/lib/typescript/components/Appbar/AppbarHeader";
+import Search from "../components/Search";
 
 const NewsJson = [
 	{
@@ -158,12 +159,7 @@ export default function NewsSceeen() {
 					}}
 				>
 					<View style={{ flex: 1 }}>
-						<Searchbar
-							style={{ margin: 10, borderRadius: 40, height: 40 }}
-							value={searchQuery}
-							onChangeText={onChangeSearch}
-							placeholder="Search"
-						/>
+            <Search value={searchQuery} onChangeText={onChangeSearch} />
 					</View>
 					<IconButton
 						icon='bookmark'

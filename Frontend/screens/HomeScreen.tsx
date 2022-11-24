@@ -14,6 +14,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { Theme } from '../App';
 import { ICoin } from '../types';
 import CryptoList from '../components/CryptoList';
+import Search from '../components/Search';
 
 const Tab = createMaterialTopTabNavigator();
 // import BottomNav from '../components/BottomNav';
@@ -72,12 +73,7 @@ function Home(props) {
   return (
     <>
       <SafeAreaView style={{ ...styles.container, backgroundColor: theme.colors.light }}>
-        <Searchbar
-          placeholder='Search'
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-          style={styles.search}
-        />
+        <Search onChangeText={onChangeSearch} value={searchQuery} />
         <View style={styles.containerContainer}>
           <Tab.Navigator>
             <Tab.Screen name='All'>
@@ -103,8 +99,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  search: { margin: 10, borderRadius: 40, height: 40 },
   containerContainer: { height: '100%' }
 });
 
 export default withTheme(Home);
+
