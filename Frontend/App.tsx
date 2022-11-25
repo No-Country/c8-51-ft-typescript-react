@@ -15,6 +15,9 @@ import { useState } from "react";
 import LoginScreen from "./screens/LoginScreen";
 import NewsScreen from "./screens/NewsScreen";
 import CurrencyConverterScreen from "./screens/CurrencyConverterScreen";
+import { ICoin } from "./types";
+import AppContext from "./components/AppContext";
+import { useFetchBinance } from "./hooks/useFetchBinance";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -47,62 +50,65 @@ export type Theme = typeof theme;
 
 export default function App() {
 	const [loggedIn] = useState(true);
-
+	const [coins, setCoins] = useState<ICoin[]>([]);
+	useFetchBinance(coins, setCoins);
 	return (
 		<PaperProvider theme={theme}>
-			<NavigationContainer>
-				{loggedIn ? (
-					<Tab.Navigator>
-						<Tab.Screen
-							name="Converter"
-							component={CurrencyConverterScreen}
-							options={{
-								tabBarLabel: () => null,
-								headerShown: false,
-								tabBarIcon: ({ color, size }) => (
-									<MaterialCommunityIcons
-										name="currency-usd"
-										color={theme.colors.primary}
-										size={size}
-									/>
-								),
-							}}
-						/>
-						<Tab.Screen
-							name="Home"
-							component={HomeScreen}
-							options={{
-								tabBarLabel: () => null,
-								headerShown: false,
-								tabBarIcon: ({ size }) => (
-									<MaterialCommunityIcons
-										name="home"
-										color={theme.colors.primary}
-										size={size}
-									/>
-								),
-							}}
-						/>
-						<Tab.Screen
-							name="News"
-							component={NewsScreen}
-							options={{
-								tabBarLabel: () => null,
-								headerShown: false,
-								tabBarIcon: ({ color, size }) => (
-									<MaterialCommunityIcons
-										name="newspaper-variant-outline"
-										color={theme.colors.primary}
-										size={size}
-									/>
-								),
-							}}
-						/>
-					</Tab.Navigator>
-				) : (
-					<LoginScreen />
-				)}
-			</NavigationContainer>
+			<AppContext.Provider value={{ coins, setCoins }}>
+				<NavigationContainer>
+					{loggedIn ? (
+						<Tab.Navigator>
+							<Tab.Screen
+								name="Converter"
+								component={CurrencyConverterScreen}
+								options={{
+									tabBarLabel: () => null,
+									headerShown: false,
+									tabBarIcon: ({ color, size }) => (
+										<MaterialCommunityIcons
+											name="currency-usd"
+											color={theme.colors.primary}
+											size={size}
+										/>
+									),
+								}}
+							/>
+							<Tab.Screen
+								name="Home"
+								component={HomeScreen}
+								options={{
+									tabBarLabel: () => null,
+									headerShown: false,
+									tabBarIcon: ({ size }) => (
+										<MaterialCommunityIcons
+											name="home"
+											color={theme.colors.primary}
+											size={size}
+										/>
+									),
+								}}
+							/>
+							<Tab.Screen
+								name="News"
+								component={NewsScreen}
+								options={{
+									tabBarLabel: () => null,
+									headerShown: false,
+									tabBarIcon: ({ color, size }) => (
+										<MaterialCommunityIcons
+											name="newspaper-variant-outline"
+											color={theme.colors.primary}
+											size={size}
+										/>
+									),
+								}}
+							/>
+						</Tab.Navigator>
+					) : (
+						<LoginScreen />
+					)}
+				</NavigationContainer>
+			</AppContext.Provider>
 		</PaperProvider>
 	);
 }

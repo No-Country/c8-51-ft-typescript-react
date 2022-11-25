@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { ICoin } from '../types';
 
 export function useFetchBinance(allCoins, setAllCoins) {
-  const fetchBinance = async () => {
+  const timer = 1000 * 60 * 5; // 5 minutes
+  const fetchBinance = () => {
     console.log('fetch');
     fetch(
       'https://api.binance.com/api/v3/ticker/24hr?symbols=[%22BTCUSDT%22,%22BNBUSDT%22,%22ETHUSDT%22,%22ADAUSDT%22,%22LTCUSDT%22]',
@@ -49,7 +50,7 @@ export function useFetchBinance(allCoins, setAllCoins) {
   useEffect(() => {
     let interval = setInterval(() => {
       fetchBinance();
-    }, 1000000);
+    }, timer);
     return () => clearInterval(interval);
   }, []);
 }

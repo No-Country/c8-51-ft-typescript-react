@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ICoin } from "../types";
 import Search from "../components/Search";
 import {
@@ -12,34 +12,35 @@ import {
 	Button,
 } from "react-native-paper";
 import { Theme } from "../App";
+import AppContext from "../components/AppContext";
 
 // pagina para comparar el valor de las criptomonedas
-const cryptoJson: ICoin[] = [
-	{
-		name: "Bitcoin",
-		symbol: "BTC",
-		price: 15100.12,
-		change24h: 10.5,
-		isFav: true,
-	},
-	{
-		name: "Ethereum",
-		symbol: "ETH",
-		price: 400.51,
-		change24h: -2.5,
-		isFav: false,
-	},
-	{
-		name: "Litecoin",
-		symbol: "LTC",
-		price: 100,
-		change24h: 0.5,
-		isFav: false,
-	},
-];
-const data = cryptoJson.map((item) => {
-	return { name: item.name, symbol: item.symbol };
-});
+// const cryptoJson: ICoin[] = [
+// 	{
+// 		name: "Bitcoin",
+// 		symbol: "BTC",
+// 		price: 15100.12,
+// 		change24h: 10.5,
+// 		isFav: true,
+// 	},
+// 	{
+// 		name: "Ethereum",
+// 		symbol: "ETH",
+// 		price: 400.51,
+// 		change24h: -2.5,
+// 		isFav: false,
+// 	},
+// 	{
+// 		name: "Litecoin",
+// 		symbol: "LTC",
+// 		price: 100,
+// 		change24h: 0.5,
+// 		isFav: false,
+// 	},
+// ];
+// const data = cryptoJson.map((item) => {
+// 	return { name: item.name, symbol: item.symbol };
+// });
 
 type currencyItem = {
 	name: string;
@@ -95,7 +96,7 @@ const ExchangeInput = ({
 					{data.map((item) => {
 						return (
 							<Menu.Item
-              key={item.symbol}
+								key={item.symbol}
 								onPress={() => {
 									setSelectedCoin(item);
 									closeMenu();
@@ -112,7 +113,10 @@ const ExchangeInput = ({
 export default function CurrencyConverterScreen() {
 	const theme = useTheme<Theme>();
 	const [searchQuery, setSearchQuery] = useState("");
-	const [allCoins, setAllCoins] = useState(cryptoJson);
+	const { coins, setCoins } = useContext(AppContext);
+	const data = coins.map((item) => {
+		return { name: item.symbol, symbol: item.symbol };
+	});
 	const [firstSelectedCoin, setFirstSelectedCoin] =
 		useState<currencyItem>(null);
 
@@ -126,7 +130,7 @@ export default function CurrencyConverterScreen() {
 	const OnChangeFirstInput = (value: string) => {
 		setFirstCoinValue(value);
 		if (firstSelectedCoin) {
-			const firstCoinPrice = cryptoJson.find(
+			const firstCoinPrice = coins.find(
 				(item) => item.symbol === firstSelectedCoin.symbol,
 			).price;
 			const result = (
@@ -134,7 +138,7 @@ export default function CurrencyConverterScreen() {
 			).toString();
 			setCurrencyValue(result);
 			if (secondSelectedCoin) {
-				const secondCoinPrice = cryptoJson.find(
+				const secondCoinPrice = coins.find(
 					(item) => item.symbol === secondSelectedCoin.symbol,
 				).price;
 				const result = (
@@ -153,7 +157,7 @@ export default function CurrencyConverterScreen() {
 	const OnChangeSecondInput = (value: string) => {
 		setSecondCoinValue(value);
 		if (secondSelectedCoin) {
-			const secondCoinPrice = cryptoJson.find(
+			const secondCoinPrice = coins.find(
 				(item) => item.symbol === secondSelectedCoin.symbol,
 			).price;
 			const result = (
@@ -161,7 +165,7 @@ export default function CurrencyConverterScreen() {
 			).toString();
 			setCurrencyValue(result);
 			if (firstSelectedCoin) {
-				const firstCoinPrice = cryptoJson.find(
+				const firstCoinPrice = coins.find(
 					(item) => item.symbol === firstSelectedCoin.symbol,
 				).price;
 				const result = (
@@ -195,7 +199,7 @@ export default function CurrencyConverterScreen() {
 				<TextInput
 					mode="outlined"
 					value={currencyValue}
-					onChangeText={(amount) => setCurrency(amount)}
+					onChangeText={(amount) => setCurrencyValue(amount)}
 					label="USD"
 					style={{ height: 40, margin: 10 }}
 				/>

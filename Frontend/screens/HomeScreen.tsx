@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import {
@@ -16,6 +16,7 @@ import { ICoin } from "../types";
 import CryptoList from "../components/CryptoList";
 import Search from "../components/Search";
 import { useFetchBinance } from "../hooks/useFetchBinance";
+import AppContext from "../components/AppContext";
 
 const Tab = createMaterialTopTabNavigator();
 // import BottomNav from '../components/BottomNav';
@@ -45,24 +46,21 @@ const cryptoJson: ICoin[] = [
 
 function Home(props) {
 	const theme = useTheme<Theme>();
+  const {coins, setCoins} = useContext(AppContext);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [allCoins, setAllCoins] = useState<ICoin[]>([]);
-	// create a timer to control useEffect
-  useFetchBinance(allCoins, setAllCoins);
-	console.log({ allCoins });
 	const isFavCallback = (symbol: string) => {
-		const newAllCoins = allCoins.map((item) => {
+		const newAllCoins = coins.map((item) => {
 			if (item.symbol === symbol) {
 				item.isFav = !item.isFav;
 			}
 			return item;
 		});
-		setAllCoins(newAllCoins);
+		setCoins(newAllCoins);
 	};
 
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);
-		setAllCoins(
+		setCoins(
 			cryptoJson.filter(
 				(item) =>
 					item.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -81,13 +79,13 @@ function Home(props) {
 					<Tab.Navigator>
 						<Tab.Screen name='All'>
 							{() => (
-								<CryptoList items={allCoins} isFavCallback={isFavCallback} />
+								<CryptoList items={coins} isFavCallback={isFavCallback} />
 							)}
 						</Tab.Screen>
 						<Tab.Screen name='Favs'>
 							{() => (
 								<CryptoList
-									items={allCoins.filter((item) => item.isFav)}
+									items={coins.filter((item) => item.isFav)}
 									isFavCallback={isFavCallback}
 								/>
 							)}

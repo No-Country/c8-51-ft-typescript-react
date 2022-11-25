@@ -159,7 +159,7 @@ export default function NewsSceeen() {
 					}}
 				>
 					<View style={{ flex: 1 }}>
-            <Search value={searchQuery} onChangeText={onChangeSearch} />
+						<Search value={searchQuery} onChangeText={onChangeSearch} />
 					</View>
 					<IconButton
 						icon='bookmark'
@@ -169,7 +169,7 @@ export default function NewsSceeen() {
 				</View>
 				<ScrollView style={{ backgroundColor: theme.colors.background }}>
 					{newsState.map((news, index) =>
-						(onlyFav || news.isFav ) ? (
+						onlyFav || news.isFav ? (
 							<NewsCard
 								news={news}
 								key={index}
