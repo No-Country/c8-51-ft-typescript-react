@@ -29,7 +29,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.4"
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
+    "nanoid": "^4.0.0"
   },
   "private": true
 }

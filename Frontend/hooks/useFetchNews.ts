@@ -1,17 +1,19 @@
 import { useEffect } from 'react';
 import { NEWS_KEY } from '@env';
 const timer = 1000 * 60 * 5; // 5 minutes
+// import { nanoid } from 'nanoid';
 
-export function useFetchNews(loading, setLoading, setNewsArticles) {
+export function useFetchNews(loading, setLoading, setNewsArticles, page) {
   const today = new Date();
   const date = `${today.getFullYear()}-${
     today.getMonth() + 1
   }-${today.getDate()}`;
+  const pageSize = 10;
   useEffect(() => {
     if (loading) {
       console.log('loading news');
       fetch(
-        `https://newsapi.org/v2/everything?q=bitcoin&from=${date}&sortBy=publishedAt&apiKey=${NEWS_KEY}`,
+        `https://newsapi.org/v2/everything?q=bitcoin&from=${date}&sortBy=popularity&pageSize=${pageSize}&apiKey=${NEWS_KEY}&page=${page}&language=en`,
       )
         .then((response) => response.json())
         .then((data) => {
@@ -23,26 +25,15 @@ export function useFetchNews(loading, setLoading, setNewsArticles) {
                 image_url: article.urlToImage,
                 url: article.url,
                 isFav: true,
-                id: index,
+                id: `${index}${article.title}`,
               };
             })
             .slice(0, 10);
-          setNewsArticles(articles);
+          setNewsArticles((prev) => [...prev, ...articles]);
           setLoading(false);
           console.log(articles);
         })
         .catch((error) => console.error(error));
     }
-    const interval = setInterval(() => {
-      console.log('fetching in interval');
-      fetch(
-        `https://newsapi.org/v2/everything?q=bitcoin&from=${date}&sortBy=relevancy&language=en&pageSize=10&apiKey=${NEWS_KEY}&page=1`,
-      )
-        .then((response) => response.json())
-        .then((json) => console.log(json))
-        .catch((error) => console.error(error))
-        .finally(() => setLoading(false));
-    }, timer);
-    return () => clearInterval(interval);
-  }, []);
+  }, [page]);
 }

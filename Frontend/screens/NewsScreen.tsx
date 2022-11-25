@@ -4,6 +4,7 @@ import {
 	TouchableOpacity,
 	ScrollViewComponent,
 	ScrollView,
+	FlatList,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -16,15 +17,16 @@ import {
 	IconButton,
 	Appbar,
 	Searchbar,
+	ActivityIndicator,
 } from "react-native-paper";
 import { Theme } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import material icon bookmark
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useEffect } from "react";
 import { AppbarHeader } from "react-native-paper/lib/typescript/components/Appbar/AppbarHeader";
 import Search from "../components/Search";
 import { useFetchNews } from "../hooks/useFetchNews";
+import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 interface NewsArticle {
 	tittle: string;
@@ -43,6 +45,7 @@ const NewsJson = [
 		image_url: "https://picsum.photos/400",
 		isFav: true,
 		id: 1,
+		url: "https://www.google.com",
 	},
 	{
 		tittle: "Ethereum surges to the moon",
@@ -52,6 +55,7 @@ const NewsJson = [
 		image_url: "https://picsum.photos/500",
 		isFav: false,
 		id: 2,
+		url: "https://www.google.com",
 	},
 	{
 		tittle: "Litecoin surges to the moon",
@@ -60,6 +64,7 @@ const NewsJson = [
 		image_url: "https://picsum.photos/700",
 		isFav: false,
 		id: 3,
+		url: "https://www.google.com",
 	},
 ];
 
@@ -72,8 +77,8 @@ const styles = StyleSheet.create({
 function NewsCard({ news, isBookmarkedCallback }) {
 	const theme = useTheme<Theme>();
 	const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
- 	return (
-		<View style={{ flex: 1, marginVertical: 8 }}>
+	return (
+		<View style={{ flex: 1, marginTop: 8 }}>
 			<Card mode="elevated" style={{ backgroundColor: theme.colors.light }}>
 				<View>
 					<Card.Cover source={{ uri: news.image_url }} />
@@ -109,7 +114,6 @@ function NewsCard({ news, isBookmarkedCallback }) {
 				>
 					<IconButton
 						icon={isBookmarked ? "bookmark" : "bookmark-outline"}
-						// containerColor={theme.colors.light}
 						iconColor={theme.colors.light}
 						onPress={() => {
 							setIsBookmarked(!isBookmarked);
@@ -122,14 +126,14 @@ function NewsCard({ news, isBookmarkedCallback }) {
 	);
 }
 
-
 export default function NewsSceeen() {
 	const [onlyFav, setOnlyFav] = React.useState(false);
 	const theme = useTheme<Theme>();
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [loading, setLoading] = React.useState(true);
 	const [newsArticles, setNewsArticles] = React.useState<NewsArticle[]>([]);
-  useFetchNews(loading, setLoading, setNewsArticles);
+	const [page, setPage] = React.useState(1);
+	useFetchNews(loading, setLoading, setNewsArticles, page);
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);
 		if (query.length > 0) {
@@ -180,24 +184,25 @@ export default function NewsSceeen() {
 						onPress={onToggleFav}
 					/>
 				</View>
-				<ScrollView style={{ backgroundColor: theme.colors.background }}>
-					{newsArticles.map((news, index) =>
-						onlyFav || news.isFav ? (
-							<NewsCard
-								news={news}
-								key={index}
-								isBookmarkedCallback={isBookmarkedCallback}
-							/>
-						) : null,
+				<FlatList
+					style={{
+						backgroundColor: theme.colors.background,
+						minHeight: 1000,
+					}}
+					data={newsArticles}
+					renderItem={({ item }) => (
+						<NewsCard news={item} isBookmarkedCallback={isBookmarkedCallback} />
 					)}
-          <Button
-            mode="contained"
-            onPress={() => console.log('Pressed')}
-            style={{ margin: 10 }}
-          >
-            Load more
-          </Button>
-				</ScrollView>
+					keyExtractor={(item) => item.id.toString()}
+					onEndReached={() => {
+						setPage(page + 1);
+						setLoading(true);
+					}}
+					onEndReachedThreshold={0.1}
+					ListFooterComponent={() => (
+						<ActivityIndicator animating={loading} size="small" />
+					)}
+				/>
 			</SafeAreaView>
 		</>
 	);
