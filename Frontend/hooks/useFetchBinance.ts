@@ -19,11 +19,6 @@ export function useFetchBinance(allCoins, setAllCoins) {
           const coins: ICoin[] = data.map((item) => {
             const [symbol] = item.symbol.split('USDT');
             const name = 'USDT';
-            console.log({
-              name,
-              symbol,
-              item: item.weightedAvgPrice,
-            });
             return {
               name,
               symbol,
@@ -33,7 +28,6 @@ export function useFetchBinance(allCoins, setAllCoins) {
             };
           });
           setAllCoins(coins);
-          console.log({ coins });
         });
       })
       .catch((err) => {

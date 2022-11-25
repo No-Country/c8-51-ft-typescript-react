@@ -21,9 +21,19 @@ import { Theme } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import material icon bookmark
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React from "react";
+import React, { useEffect } from "react";
 import { AppbarHeader } from "react-native-paper/lib/typescript/components/Appbar/AppbarHeader";
 import Search from "../components/Search";
+import { useFetchNews } from "../hooks/useFetchNews";
+
+interface NewsArticle {
+	tittle: string;
+	paragraph: string;
+	image_url: string;
+	url: string;
+	isFav: boolean;
+	id: number;
+}
 
 const NewsJson = [
 	{
@@ -62,8 +72,7 @@ const styles = StyleSheet.create({
 function NewsCard({ news, isBookmarkedCallback }) {
 	const theme = useTheme<Theme>();
 	const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
-
-	return (
+ 	return (
 		<View style={{ flex: 1, marginVertical: 8 }}>
 			<Card mode="elevated" style={{ backgroundColor: theme.colors.light }}>
 				<View>
@@ -112,15 +121,19 @@ function NewsCard({ news, isBookmarkedCallback }) {
 		</View>
 	);
 }
+
+
 export default function NewsSceeen() {
-	const [newsState, setNewsState] = React.useState(NewsJson);
 	const [onlyFav, setOnlyFav] = React.useState(false);
 	const theme = useTheme<Theme>();
 	const [searchQuery, setSearchQuery] = React.useState("");
+	const [loading, setLoading] = React.useState(true);
+	const [newsArticles, setNewsArticles] = React.useState<NewsArticle[]>([]);
+  useFetchNews(loading, setLoading, setNewsArticles);
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);
 		if (query.length > 0) {
-			setNewsState(
+			setNewsArticles(
 				NewsJson.filter(
 					(news) =>
 						news.tittle.toLowerCase().includes(query.toLowerCase()) ||
@@ -132,14 +145,14 @@ export default function NewsSceeen() {
 	const onToggleFav = () => {
 		setOnlyFav(!onlyFav);
 		if (onlyFav) {
-			setNewsState(NewsJson.filter((news) => news.isFav));
+			setNewsArticles(NewsJson.filter((news) => news.isFav));
 		} else {
-			setNewsState(NewsJson);
+			setNewsArticles(NewsJson);
 		}
 	};
 	const isBookmarkedCallback = (id: number) => {
-		setNewsState(
-			newsState.map((news) => {
+		setNewsArticles(
+			newsArticles.map((news) => {
 				if (news.id === id) {
 					news.isFav = !news.isFav;
 				}
@@ -168,7 +181,7 @@ export default function NewsSceeen() {
 					/>
 				</View>
 				<ScrollView style={{ backgroundColor: theme.colors.background }}>
-					{newsState.map((news, index) =>
+					{newsArticles.map((news, index) =>
 						onlyFav || news.isFav ? (
 							<NewsCard
 								news={news}
@@ -177,6 +190,13 @@ export default function NewsSceeen() {
 							/>
 						) : null,
 					)}
+          <Button
+            mode="contained"
+            onPress={() => console.log('Pressed')}
+            style={{ margin: 10 }}
+          >
+            Load more
+          </Button>
 				</ScrollView>
 			</SafeAreaView>
 		</>
