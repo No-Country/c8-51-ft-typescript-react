@@ -1,10 +1,11 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Surface, Text, useTheme } from "react-native-paper";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Button, Surface, Text, useTheme } from "react-native-paper";
 import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Theme } from "../App";
 import { ICoin } from "../types";
+import { NavigationContext } from "@react-navigation/native";
 
 const styles = StyleSheet.create({
 	container: {
@@ -88,7 +89,8 @@ export default function CryptoList(props: IProps) {
 			</Surface>
 		);
 	}
-
+	// We can access navigation object via context
+	const navigation = React.useContext(NavigationContext);
 	return (
 		<View
 			style={{ ...styles.container, backgroundColor: theme.colors.background }}
@@ -103,7 +105,12 @@ export default function CryptoList(props: IProps) {
 			</Surface>
 			<ScrollView style={styles.containerContainer}>
 				{items.map((coin) => (
-					<ListItem key={coin.name + coin.symbol} {...coin} />
+					<TouchableOpacity
+						key={coin.name + coin.symbol}
+						onPress={() => navigation.navigate("Detail", { coin })}
+					>
+						<ListItem key={coin.name + coin.symbol} {...coin} />
+					</TouchableOpacity>
 				))}
 			</ScrollView>
 		</View>

@@ -17,7 +17,8 @@ import CryptoList from "../components/CryptoList";
 import Search from "../components/Search";
 import { useFetchBinance } from "../hooks/useFetchBinance";
 import AppContext from "../components/AppContext";
-
+import DetailScreen from "./DetailScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 const Tab = createMaterialTopTabNavigator();
 // import BottomNav from '../components/BottomNav';
 const cryptoJson: ICoin[] = [
@@ -44,9 +45,9 @@ const cryptoJson: ICoin[] = [
 	},
 ];
 
-function Home(props) {
+function Home({ navigation }: any) {
 	const theme = useTheme<Theme>();
-  const {coins, setCoins} = useContext(AppContext);
+	const { coins, setCoins } = useContext(AppContext);
 	const [searchQuery, setSearchQuery] = useState("");
 	const isFavCallback = (symbol: string) => {
 		const newAllCoins = coins.map((item) => {
@@ -78,9 +79,7 @@ function Home(props) {
 				<View style={styles.containerContainer}>
 					<Tab.Navigator>
 						<Tab.Screen name='All'>
-							{() => (
-								<CryptoList items={coins} isFavCallback={isFavCallback} />
-							)}
+							{() => <CryptoList items={coins} isFavCallback={isFavCallback} />}
 						</Tab.Screen>
 						<Tab.Screen name='Favs'>
 							{() => (
@@ -97,6 +96,21 @@ function Home(props) {
 	);
 }
 
+const Stack = createNativeStackNavigator();
+
+const StackNavigator = () => {
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			<Stack.Screen name="Home" component={Home} />
+			<Stack.Screen name="Detail" component={DetailScreen} />
+		</Stack.Navigator>
+	);
+};
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -104,4 +118,4 @@ const styles = StyleSheet.create({
 	containerContainer: { height: "100%" },
 });
 
-export default withTheme(Home);
+export default withTheme(StackNavigator);
