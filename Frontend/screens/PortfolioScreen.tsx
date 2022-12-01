@@ -275,7 +275,7 @@ export default function PortfolioScreen() {
 					return (
 						<Surface
 							style={{
-								backgroundColor: "#280776",
+								backgroundColor: "#04111d",
 								display: "flex",
 								flexDirection: "row",
 								justifyContent: "space-between",
