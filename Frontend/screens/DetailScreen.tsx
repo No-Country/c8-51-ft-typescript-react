@@ -21,9 +21,9 @@ import { NavigationContext } from "@react-navigation/native";
 import { ICoin } from "../types";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-const binanceKlinesUrl =
-	"https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=30";
-
+const binanceKlinesUrl = (symbol) => {
+	return `https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=1d&limit=30`;
+};
 type Kline = [
 	openTime: number,
 	open: string,
@@ -45,10 +45,10 @@ const DetailScreen = (params) => {
 	const coin = params.route.params.coin as ICoin;
 	const [data, setData] = React.useState<Kline[]>([]);
 	const [isLoading, setIsLoading] = React.useState(true);
-	navigation.setOptions({ title: coin.symbol });
+	navigation.setOptions({ title: `${coin.symbol} Details` });
 	React.useEffect(() => {
-		if (isLoading) {
-			fetch(binanceKlinesUrl)
+		if (isLoading && coin.symbol) {
+			fetch(binanceKlinesUrl(coin.symbol))
 				.then((res) => res.json())
 				.then((data: Kline[]) => {
 					setData(data);
@@ -61,7 +61,6 @@ const DetailScreen = (params) => {
 	const Chart = () => {
 		return (
 			<>
-				<Text style={styles.title}>30 Days Price</Text>
 				<LineChart
 					data={{
 						labels: data
@@ -114,20 +113,14 @@ const DetailScreen = (params) => {
 		);
 	};
 	const InfoCard = () => {
-		const [expand, setExpand] = React.useState(true);
+		const [expand, setExpand] = React.useState(false);
 		return (
 			<View
 				style={{
-					display: "flex",
-					// height: "content",
+					...styles.Card,
 					height: expand ? 300 : 200,
 					width: expand ? 300 : 200,
-					// width: "content",
-					backgroundColor: "#3a007d",
-					alignSelf: "center",
-					margin: 10,
-					borderRadius: 10,
-					elevation: 5,
+					padding: expand ? 0 : 10,
 				}}
 			>
 				<View
@@ -136,27 +129,10 @@ const DetailScreen = (params) => {
 						display: "flex",
 						flexDirection: "row",
 						justifyContent: "space-between",
-						// padding: 10,
 					}}
 				>
-					<Text
-						style={{
-							fontSize: 20,
-							fontWeight: "bold",
-							color: "white",
-							margin: 10,
-						}}
-					>
-						{coin.symbol}
-					</Text>
-					<Text
-						style={{
-							fontSize: 20,
-							fontWeight: "bold",
-							color: "white",
-							margin: 10,
-						}}
-					>
+					<Text style={styles.textMedium}>{coin.symbol}</Text>
+					<Text style={styles.textMedium}>
 						${Number(coin.price).toFixed(2)}
 					</Text>
 				</View>
@@ -165,7 +141,6 @@ const DetailScreen = (params) => {
 						display: "flex",
 						flexDirection: "column",
 						flex: 1,
-						// padding: 10,
 						alignItems: "center",
 					}}
 				>
@@ -303,9 +278,18 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "flex-start",
 	},
-	title: {
+	Card: {
+		display: "flex",
+		backgroundColor: "#3a007d",
+		alignSelf: "center",
+		margin: 10,
+		borderRadius: 10,
+		elevation: 5,
+	},
+	textMedium: {
 		fontSize: 20,
 		fontWeight: "bold",
-		color: "#3a007d",
+		color: "white",
+		margin: 10,
 	},
 });
