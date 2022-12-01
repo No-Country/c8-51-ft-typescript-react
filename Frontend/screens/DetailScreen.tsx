@@ -60,63 +60,69 @@ const DetailScreen = (params) => {
 
 	const Chart = () => {
 		return (
-			<LineChart
-				data={{
-					labels: data
-						.map((item, index) => {
-							if (count > 5) {
-								const date = new Date(item[0]);
-								count = 0;
-								return `${date.toLocaleDateString().split("/")[1]}/${
-									date.toLocaleDateString().split("/")[0]
-								}`;
-							}
-							count++;
-							return "";
-						})
-						.reverse(),
-					datasets: [
-						{
-							data: data.map((item) => parseFloat(item[4]) || 0).reverse(),
+			<>
+				<Text style={styles.title}>30 Days Price</Text>
+				<LineChart
+					data={{
+						labels: data
+							.map((item, index) => {
+								if (count > 5) {
+									const date = new Date(item[0]);
+									count = 0;
+									return `${date.toLocaleDateString().split("/")[1]}/${
+										date.toLocaleDateString().split("/")[0]
+									}`;
+								}
+								count++;
+								return "";
+							})
+							.reverse(),
+						datasets: [
+							{
+								data: data.map((item) => parseFloat(item[4]) || 0).reverse(),
+							},
+						],
+					}}
+					width={Dimensions.get("window").width - 20} // from react-native
+					height={200}
+					yAxisLabel="$"
+					yAxisInterval={1} // optional, defaults to 1
+					chartConfig={{
+						// backgroundColor: "#744aa5",
+						backgroundGradientFrom: "#6b226a",
+						backgroundGradientTo: "#b370ff",
+						decimalPlaces: 0, // optional, defaults to 2dp
+						color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+						labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+						style: {
+							borderRadius: 16,
 						},
-					],
-				}}
-				width={Dimensions.get("window").width - 20} // from react-native
-				height={200}
-				yAxisLabel="$"
-				yAxisInterval={1} // optional, defaults to 1
-				chartConfig={{
-					backgroundColor: "#e26a00",
-					backgroundGradientFrom: "#fb8c00",
-					backgroundGradientTo: "#ffa726",
-					decimalPlaces: 0, // optional, defaults to 2dp
-					color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-					labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-					style: {
+						propsForDots: {
+							r: "3",
+							strokeWidth: "1",
+							stroke: "#484848",
+						},
+					}}
+					bezier={true}
+					style={{
+						marginVertical: 8,
 						borderRadius: 16,
-					},
-					propsForDots: {
-						r: "6",
-						strokeWidth: "2",
-						stroke: "#ffa726",
-					},
-				}}
-				bezier={true}
-				style={{
-					marginVertical: 8,
-					borderRadius: 16,
-					marginHorizontal: 4,
-				}}
-			/>
+						marginHorizontal: 4,
+					}}
+				/>
+			</>
 		);
 	};
 	const InfoCard = () => {
+		const [expand, setExpand] = React.useState(true);
 		return (
 			<View
 				style={{
 					display: "flex",
-					height: 150,
-					width: 200,
+					// height: "content",
+					height: expand ? 300 : 200,
+					width: expand ? 300 : 200,
+					// width: "content",
 					backgroundColor: "#3a007d",
 					alignSelf: "center",
 					margin: 10,
@@ -126,10 +132,11 @@ const DetailScreen = (params) => {
 			>
 				<View
 					style={{
+						flex: 1,
 						display: "flex",
 						flexDirection: "row",
 						justifyContent: "space-between",
-						padding: 10,
+						// padding: 10,
 					}}
 				>
 					<Text
@@ -157,8 +164,8 @@ const DetailScreen = (params) => {
 					style={{
 						display: "flex",
 						flexDirection: "column",
-
-						padding: 10,
+						flex: 1,
+						// padding: 10,
 						alignItems: "center",
 					}}
 				>
@@ -171,15 +178,23 @@ const DetailScreen = (params) => {
 						}}
 					>
 						{coin.change24h > 0 ? (
-              <>
-							<MaterialCommunityIcons name="arrow-up" size={30} color="white" />
-							{`${coin.change24h}%`}
-              </>
+							<>
+								<MaterialCommunityIcons
+									name="arrow-up"
+									size={30}
+									color="white"
+								/>
+								{`${coin.change24h}%`}
+							</>
 						) : (
-              <>
-							<MaterialCommunityIcons name="arrow-down" size={30} color="white" />
-							{`${coin.change24h}%`}
-              </> 
+							<>
+								<MaterialCommunityIcons
+									name="arrow-down"
+									size={30}
+									color="white"
+								/>
+								{`${coin.change24h}%`}
+							</>
 						)}
 					</Text>
 					<Text
@@ -193,6 +208,75 @@ const DetailScreen = (params) => {
 						24h Change:
 					</Text>
 				</View>
+				{expand ? (
+					<View
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							flex: 1,
+							padding: 10,
+							alignItems: "center",
+						}}
+					>
+						<Text
+							style={{
+								color: "white",
+								fontSize: 18,
+								fontWeight: "bold",
+								margin: 0,
+							}}
+						>
+							Low: $
+							{data
+								.map((item) => Number(item[3]))
+								.sort((a, b) => a - b)[0]
+								.toFixed(0)}
+						</Text>
+						<Text
+							style={{
+								color: "white",
+								fontSize: 10,
+								fontWeight: "bold",
+								margin: 10,
+							}}
+						>
+							Volume 30 days:{"  "}
+							{data
+								.map((item) => Number(item[5]))
+								.reduce((a, b) => a + b)
+								.toFixed(0)}
+						</Text>
+						<Text
+							style={{
+								color: "white",
+								fontSize: 30,
+								fontWeight: "bold",
+								margin: 0,
+							}}
+						>
+							High: $
+							{data
+								.map((item) => Number(item[2]))
+								.sort((a, b) => b - a)[0]
+								.toFixed(0)}
+						</Text>
+					</View>
+				) : null}
+				<TouchableOpacity
+					style={{
+						flex: 0,
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+					}}
+					onPress={() => setExpand(!expand)}
+				>
+					<MaterialCommunityIcons
+						name={expand ? "chevron-up" : "chevron-down"}
+						size={30}
+						color="white"
+					/>
+				</TouchableOpacity>
 			</View>
 		);
 	};
@@ -218,5 +302,10 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		alignItems: "center",
 		justifyContent: "flex-start",
+	},
+	title: {
+		fontSize: 20,
+		fontWeight: "bold",
+		color: "#3a007d",
 	},
 });
