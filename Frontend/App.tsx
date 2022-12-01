@@ -59,6 +59,21 @@ export default function App() {
 					{loggedIn ? (
 						<Tab.Navigator>
 							<Tab.Screen
+								name="HomeScreen"
+								component={HomeScreen}
+								options={{
+									tabBarLabel: () => null,
+									headerShown: false,
+									tabBarIcon: ({ size }) => (
+										<MaterialCommunityIcons
+											name="home"
+											color={theme.colors.primary}
+											size={size}
+										/>
+									),
+								}}
+							/>
+							<Tab.Screen
 								name="Converter"
 								component={CurrencyConverterScreen}
 								options={{
@@ -67,21 +82,6 @@ export default function App() {
 									tabBarIcon: ({ color, size }) => (
 										<MaterialCommunityIcons
 											name="currency-usd"
-											color={theme.colors.primary}
-											size={size}
-										/>
-									),
-								}}
-							/>
-							<Tab.Screen
-								name="Home"
-								component={HomeScreen}
-								options={{
-									tabBarLabel: () => null,
-									headerShown: false,
-									tabBarIcon: ({ size }) => (
-										<MaterialCommunityIcons
-											name="home"
 											color={theme.colors.primary}
 											size={size}
 										/>

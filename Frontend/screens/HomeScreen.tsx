@@ -106,7 +106,11 @@ const StackNavigator = () => {
 			}}
 		>
 			<Stack.Screen name="Home" component={Home} />
-			<Stack.Screen name="Detail" component={DetailScreen} />
+			<Stack.Screen
+				options={{ headerShown: true }}
+				name="Detail"
+				component={DetailScreen}
+			/>
 		</Stack.Navigator>
 	);
 };
