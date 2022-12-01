@@ -27,7 +27,7 @@ export function useFetchBinance(allCoins, setAllCoins) {
               isFav: false,
             };
           });
-          setAllCoins(coins);
+          setAllCoins([...coins]);
         });
       })
       .catch((err) => {
