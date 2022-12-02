@@ -10,10 +10,10 @@ import {
 	ToggleButton,
 	RadioButton,
 } from "react-native-paper";
-import ToggleButtonGroup from "react-native-paper/lib/typescript/components/ToggleButton/ToggleButtonGroup";
 import { namesForSymbols } from "../hooks/useFetchBinance";
 import { Portfolio, Transaction } from "../screens/PortfolioScreen";
 import { ICoin } from "../types";
+import { useForm, Controller } from "react-hook-form";
 
 export default function NewTransactionModal({
 	visible,
@@ -72,14 +72,28 @@ export default function NewTransactionModal({
 	const [modalAmount, setModalAmount] = useState(initialValues.amount || null);
 	const [modalPrice, setModalPrice] = useState(initialValues.price || null);
 	const [menuSymbolVisible, setMenuSymbolVisible] = useState(false);
+	console.log(initialValues);
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+    setValue,
+	} = useForm({
+		defaultValues: {
+			symbol: modalCoin,
+			amount: initialValues.amount || null,
+			type: initialValues.type || null,
+			price: initialValues.price || null,
+		},
+	});
 
-	const addTransaccion = () => {
-		console.log("addCoin");
+	const addTransaccion = (data) => {
+		console.log(data);
 		const newTransaction: Transaction = {
 			date: new Date(),
-			type: modalType,
-			amount: Number(modalAmount),
-			price: Number(modalPrice),
+			type: data.type,
+			amount: parseFloat(data.amount),
+			price: parseFloat(data.price),
 		};
 		if (portfolio.find((coin) => coin.symbol === modalCoin)) {
 			const newPortfolio = portfolio.map((coin) => {
@@ -106,11 +120,12 @@ export default function NewTransactionModal({
 		hideModal();
 	};
 	useEffect(() => {
-		setModalType(initialValues.type || null);
 		setModalCoin(initialValues.symbol || null);
-		setModalAmount(initialValues.amount || null);
-		setModalPrice(initialValues.price || null);
+    setValue("type", initialValues.type || null);
+    setValue("amount", initialValues.amount || null);
+    setValue("price", initialValues.price || null);
 	}, [initialValues]);
+
 	return (
 		<Portal>
 			<Modal
@@ -154,37 +169,53 @@ export default function NewTransactionModal({
 							/>
 						))}
 					</Menu>
-					{/* buy/sell button group */}
-					<RadioButton.Group
-						onValueChange={(newValue: "buy" | "sell") => setModalType(newValue)}
-						value={modalType}
-					>
-						<View
-							style={{
-								flexDirection: "row",
-								backgroundColor: "#ebb2b2",
-							}}
-						>
-							<RadioButton.Item label="Compra" value="buy" />
-							<RadioButton.Item label="Venta" value="sell" />
-						</View>
-					</RadioButton.Group>
-
-					<TextInput
-						mode="outlined"
-						label={"Precio"}
-						style={{ width: 200 }}
-						onChangeText={(text) => setModalPrice(text)}
-						value={modalPrice}
-						placeholder="Precio"
+					<Controller
+						name="type"
+						control={control}
+						rules={{ required: true }}
+						render={({ field: { onChange, value } }) => (
+							<RadioButton.Group onValueChange={onChange} value={value}>
+								<View
+									style={{
+										flexDirection: "row",
+										backgroundColor: "#ebb2b2",
+									}}
+								>
+									<RadioButton.Item label="Compra" value="buy" />
+									<RadioButton.Item label="Venta" value="sell" />
+								</View>
+							</RadioButton.Group>
+						)}
 					/>
-					<TextInput
-						mode="outlined"
-						label={"Cantidad"}
-						style={{ width: 200 }}
-						onChangeText={(text) => setModalAmount(text)}
-						value={modalAmount}
-						placeholder="Cantidad"
+					<Controller
+						name="price"
+						control={control}
+						rules={{ required: true }}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInput
+								mode="outlined"
+								label={"Precio"}
+								style={{ width: 200 }}
+								onChangeText={onChange}
+								value={value}
+								placeholder="Precio"
+							/>
+						)}
+					/>
+					<Controller
+						name="amount"
+						control={control}
+						rules={{ required: true }}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInput
+								mode="outlined"
+								label={"Cantidad"}
+								style={{ width: 200 }}
+								onChangeText={onChange}
+								value={value}
+								placeholder="Cantidad"
+							/>
+						)}
 					/>
 					<View
 						style={{
@@ -194,10 +225,7 @@ export default function NewTransactionModal({
 						}}
 					>
 						<Button
-							onPress={() => {
-								addTransaccion();
-								hideModal();
-							}}
+							onPress={handleSubmit(addTransaccion)}
 							mode="contained"
 							style={{ margin: 10 }}
 						>

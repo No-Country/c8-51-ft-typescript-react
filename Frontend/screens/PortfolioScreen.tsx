@@ -245,7 +245,7 @@ export default function PortfolioScreen() {
 			amount: "",
 			price: "",
 			date: null,
-			type: "",
+			type: null,
 		});
 		const hideModal = () => {
 			setVisible(false);
@@ -254,7 +254,7 @@ export default function PortfolioScreen() {
 				amount: "",
 				price: "",
 				date: null,
-				type: "",
+				type: null,
 			});
 		};
 		return (
@@ -262,9 +262,9 @@ export default function PortfolioScreen() {
 				<NewTransactionModal
 					visible={visible}
 					setVisible={setVisible}
-          hideModal={hideModal}
-          portfolio={portfolio}
-          setPortfolio={setPortfolio}
+					hideModal={hideModal}
+					portfolio={portfolio}
+					setPortfolio={setPortfolio}
 					coins={coins}
 					initialValues={initialModalValues}
 				/>
