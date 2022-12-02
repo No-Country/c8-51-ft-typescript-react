@@ -238,7 +238,7 @@ export default function PortfolioScreen() {
 	};
 
 	const CoinCard = () => {
-		const [visible, setVisible] = useState(true);
+		const [visible, setVisible] = useState(false);
 		const showModal = () => setVisible(true);
 		const [initialModalValues, setInitialModalValues] = useState({
 			symbol: "",
