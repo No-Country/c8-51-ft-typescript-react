@@ -1,5 +1,32 @@
 import { useEffect } from 'react';
 import { ICoin } from '../types';
+export const namesForSymbols = {
+  BTC: 'Bitcoin',
+  ETH: 'Ethereum',
+  XRP: 'Ripple',
+  BCH: 'Bitcoin Cash',
+  LTC: 'Litecoin',
+  EOS: 'EOS',
+  BNB: 'Binance Coin',
+  XLM: 'Stellar',
+  TRX: 'Tron',
+  ADA: 'Cardano',
+  XMR: 'Monero',
+  DASH: 'Dash',
+  NEO: 'NEO',
+  XTZ: 'Tezos',
+  ETC: 'Ethereum Classic',
+  MIOTA: 'IOTA',
+  VET: 'VeChain',
+  ONT: 'Ontology',
+  QTUM: 'Qtum',
+  ZEC: 'Zcash',
+  ICX: 'ICON',
+  ZIL: 'Zilliqa',
+  BSV: 'Bitcoin SV',
+  NANO: 'Nano',
+  DOGE: 'Dogecoin',
+};
 
 export function useFetchBinance(allCoins, setAllCoins) {
   const timer = 1000 * 60 * 5; // 5 minutes
@@ -18,7 +45,7 @@ export function useFetchBinance(allCoins, setAllCoins) {
         res.json().then((data) => {
           const coins: ICoin[] = data.map((item) => {
             const [symbol] = item.symbol.split('USDT');
-            const name = 'USDT';
+            const name = namesForSymbols[symbol];
             return {
               name,
               symbol,

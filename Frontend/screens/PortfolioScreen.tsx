@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
 import { ICoin } from "../types";
 import {
@@ -21,19 +21,21 @@ import {
 	useTheme,
 } from "react-native-paper";
 import NewTransactionModal from "../components/NewTrasanctionModal";
-interface Transaction {
+export interface Transaction {
 	date: Date;
 	type: "buy" | "sell";
 	amount: number;
 	price: number;
 }
-type Portfolio = {
+export type Portfolio = {
+	name: string;
 	symbol: string;
 	transactions: Transaction[];
 }[];
 
 const PortfolioJson: Portfolio = [
 	{
+		name: "Bitcoin",
 		symbol: "BTC",
 		transactions: [
 			{
@@ -57,6 +59,7 @@ const PortfolioJson: Portfolio = [
 		],
 	},
 	{
+		name: "Ethereum",
 		symbol: "ETH",
 		transactions: [
 			{
@@ -112,7 +115,7 @@ export default function PortfolioScreen() {
 		},
 	});
 	const { coins } = React.useContext(AppContext || null);
-	const portfolio = PortfolioJson;
+	const [portfolio, setPortfolio] = useState(PortfolioJson);
 	console.log(coins);
 	let gananciaTotal = 0;
 	let portfolioTotal = 0;
@@ -235,46 +238,48 @@ export default function PortfolioScreen() {
 	};
 
 	const CoinCard = () => {
-		const [visible, setVisible] = useState(false);
-    const [transactionsVisible, setTransactionsVisible] = useState(true);
+		const [visible, setVisible] = useState(true);
 		const showModal = () => setVisible(true);
 		const [initialModalValues, setInitialModalValues] = useState({
 			symbol: "",
 			amount: "",
 			price: "",
-			date: "",
+			date: null,
 			type: "",
 		});
+		const hideModal = () => {
+			setVisible(false);
+			setInitialModalValues({
+				symbol: "",
+				amount: "",
+				price: "",
+				date: null,
+				type: "",
+			});
+		};
 		return (
 			<>
 				<NewTransactionModal
 					visible={visible}
 					setVisible={setVisible}
+          hideModal={hideModal}
+          portfolio={portfolio}
+          setPortfolio={setPortfolio}
 					coins={coins}
 					initialValues={initialModalValues}
 				/>
+
 				<ScrollView
 					style={{
 						display: "flex",
 						flexDirection: "column",
-						height: "100%",
+						height: "auto",
 						backgroundColor: "#c9dfee",
 						borderRadius: 0,
-						position: "relative",
+						zIndex: 1,
+						marginTop: 10,
 					}}
 				>
-					<FAB
-						style={{
-							position: "absolute",
-							margin: 16,
-							right: 0,
-							bottom: -516,
-							backgroundColor: "#6567dc",
-							zIndex: 100,
-						}}
-						icon="plus"
-						onPress={showModal}
-					/>
 					{portfolio.map((coin) => {
 						const coinAmount = coin.transactions.reduce((acc, transaction) => {
 							if (transaction.type === "buy") {
@@ -286,98 +291,129 @@ export default function PortfolioScreen() {
 						const coinPrice =
 							coins.find((item) => item.symbol === coin.symbol).price || 0;
 						return (
-							<TouchableOpacity
-								onLongPress={() => {
-									setInitialModalValues({
-										symbol: coin.symbol,
-										amount: "2",
-										price: "4",
-										date: "",
-										type: "",
-									});
-									showModal();
+							<List.Accordion
+								title={coin.symbol}
+								titleStyle={{ color: "#fff" }}
+								style={{
+									backgroundColor: "#04111d",
+									display: "flex",
+									flexDirection: "row",
+									justifyContent: "space-between",
+									alignItems: "center",
+									height: 50,
 								}}
-								key={coin.symbol}
-							>
-								<Surface
-									style={{
-										backgroundColor: "#04111d",
-										display: "flex",
-										flexDirection: "row",
-										justifyContent: "space-between",
-										alignItems: "center",
-										height: transactionsVisible ? 200 : 50,
-									}}
-								>
-									<View>
-										<Text style={{ fontSize: 16, color: "#FFF" }}>
-											{coin.symbol}
-										</Text>
-										<Text style={{ fontSize: 12, color: "#f0d59b" }}>
+								left={(props) => (
+									<List.Icon
+										{...props}
+										icon={coin.name.toLowerCase()}
+										color="#fff"
+									/>
+								)}
+								right={(props) => (
+									<View
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											justifyContent: "space-between",
+											alignItems: "center",
+											width: 100,
+										}}
+									>
+										<Text
+											style={{
+												alignSelf: "flex-end",
+												fontSize: 12,
+												color: "#f0d59b",
+											}}
+										>
 											<Text style={{ fontSize: 8 }}>cant:</Text>
 											{coinAmount}
 										</Text>
+										<View>
+											<Text style={{ fontSize: 14, color: "#fff" }}>
+												${coinPrice}
+											</Text>
+											<Text
+												style={{
+													fontSize: 12,
+													color: "#f0d59b",
+													alignSelf: "flex-end",
+												}}
+											>
+												${(coinAmount * coinPrice).toFixed(2)}
+											</Text>
+										</View>
 									</View>
-									<View>
-										<Text style={{ fontSize: 16, color: "#fff" }}>
-											${coinPrice}
+								)}
+							>
+								{coin.transactions.map((transaction, index) => (
+									<TouchableOpacity
+										key={index}
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											justifyContent: "space-between",
+											alignItems: "center",
+											height: 50,
+											padding: 0,
+											backgroundColor: "#04111d",
+											borderBottomColor: "#ffffff",
+											borderBottomWidth: 1,
+											width: "100%",
+											paddingRight: 10,
+										}}
+										onLongPress={() => {
+											setInitialModalValues({
+												symbol: coin.symbol,
+												amount: transaction.amount.toFixed(2),
+												price: transaction.price.toFixed(2),
+												date: transaction.date,
+												type: transaction.type,
+											});
+											showModal();
+										}}
+									>
+										<View>
+											<Text style={{ fontSize: 16, color: "#FFF" }}>
+												{transaction.type.toLocaleUpperCase()}
+											</Text>
+										</View>
+										<Text style={{ fontSize: 12, color: "#f0d59b" }}>
+											<Text style={{ fontSize: 12 }}>cant:</Text>
+											{transaction.amount}
 										</Text>
-										<Text
-											style={{
-												fontSize: 12,
-												color: "#f0d59b",
-												alignSelf: "flex-end",
-											}}
-										>
-											${(coinAmount * coinPrice).toFixed(2)}
-										</Text>
-									</View>
-                  { coin.transactions.length > 0 && 
-                    transactionsVisible && 
-                    coin.transactions.map((transactio,index) => (
-                      <View
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          height: 50,
-                          backgroundColor: "#04111d",
-                          borderBottomColor: "#6567dc",
-                          borderBottomWidth: 1,
-                        }}
-                      >
-                        <View>
-                          <Text style={{ fontSize: 16, color: "#FFF" }}>
-                            {transactio.type}
-                          </Text>
-                          <Text style={{ fontSize: 12, color: "#f0d59b" }}>
-                            <Text style={{ fontSize: 8 }}>cant:</Text>
-                            {transactio.amount}
-                          </Text>
-                        </View>
-                        <View>
-                          <Text style={{ fontSize: 16, color: "#fff" }}>
-                            ${transactio.price}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: "#f0d59b",
-                              alignSelf: "flex-end",
-                            }}
-                          >
-                            ${transactio.amount * transactio.price}
-                          </Text>
-                        </View>
-                      </View>
-                    ))}
-								</Surface>
-							</TouchableOpacity>
+										<View>
+											<Text style={{ fontSize: 16, color: "#fff" }}>
+												${transaction.price}
+											</Text>
+											<Text
+												style={{
+													fontSize: 12,
+													color: "#f0d59b",
+													alignSelf: "flex-end",
+												}}
+											>
+												Total: ${transaction.amount * transaction.price}
+											</Text>
+										</View>
+									</TouchableOpacity>
+								))}
+							</List.Accordion>
 						);
 					})}
 				</ScrollView>
+				<Portal>
+					<FAB
+						style={{
+							position: "absolute",
+							right: 16,
+							bottom: 94,
+							zIndex: 100,
+						}}
+						icon="plus"
+						onPress={showModal}
+					/>
+				</Portal>
 			</>
 		);
 	};

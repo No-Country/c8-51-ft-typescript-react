@@ -7,7 +7,12 @@ import {
 	Button,
 	Modal,
 	TextInput,
+	ToggleButton,
+	RadioButton,
 } from "react-native-paper";
+import ToggleButtonGroup from "react-native-paper/lib/typescript/components/ToggleButton/ToggleButtonGroup";
+import { namesForSymbols } from "../hooks/useFetchBinance";
+import { Portfolio, Transaction } from "../screens/PortfolioScreen";
 import { ICoin } from "../types";
 
 export default function NewTransactionModal({
@@ -15,18 +20,23 @@ export default function NewTransactionModal({
 	setVisible,
 	coins,
 	initialValues,
+	hideModal,
+	portfolio,
+	setPortfolio,
 }: {
 	visible: boolean;
 	setVisible: (visible: boolean) => void;
 	coins: ICoin[];
+	hideModal: () => void;
 	initialValues?: {
 		symbol: string;
 		amount: string;
-		type: string;
+		type: "buy" | "sell";
 		price: string;
 	};
+	portfolio: Portfolio;
+	setPortfolio: (portfolio: Portfolio) => void;
 }) {
-	console.log({ initialValues });
 	const theme = useTheme();
 	const styles = StyleSheet.create({
 		contentStyle: {
@@ -48,7 +58,6 @@ export default function NewTransactionModal({
 			margin: 10,
 		},
 	});
-	const hideModal = () => setVisible(false);
 	const containerStyle = {
 		backgroundColor: "white",
 		padding: 20,
@@ -56,21 +65,52 @@ export default function NewTransactionModal({
 		margin: 20,
 		borderRadius: 20,
 	};
-	const [modalType, setModalType] = useState(initialValues.type || null);
-	const [menuTypeVisible, setMenuTypeVisible] = useState(false);
+	const [modalType, setModalType] = useState<"buy" | "sell">(
+		initialValues.type || null,
+	);
 	const [modalCoin, setModalCoin] = useState(initialValues.symbol || null);
 	const [modalAmount, setModalAmount] = useState(initialValues.amount || null);
 	const [modalPrice, setModalPrice] = useState(initialValues.price || null);
 	const [menuSymbolVisible, setMenuSymbolVisible] = useState(false);
+
 	const addTransaccion = () => {
 		console.log("addCoin");
+		const newTransaction: Transaction = {
+			date: new Date(),
+			type: modalType,
+			amount: Number(modalAmount),
+			price: Number(modalPrice),
+		};
+		if (portfolio.find((coin) => coin.symbol === modalCoin)) {
+			const newPortfolio = portfolio.map((coin) => {
+				if (coin.symbol === modalCoin) {
+					return {
+						...coin,
+						transactions: [...coin.transactions, newTransaction],
+					};
+				}
+				return coin;
+			});
+			setPortfolio(newPortfolio);
+		} else {
+			const newPortfolio = [
+				...portfolio,
+				{
+					symbol: modalCoin,
+					name: namesForSymbols[modalCoin],
+					transactions: [newTransaction],
+				},
+			];
+			setPortfolio(newPortfolio);
+		}
+		hideModal();
 	};
-  useEffect(() => {
-    setModalType(initialValues.type || null);
-    setModalCoin(initialValues.symbol || null);
-    setModalAmount(initialValues.amount || null);
-    setModalPrice(initialValues.price || null);
-  }, [initialValues]);
+	useEffect(() => {
+		setModalType(initialValues.type || null);
+		setModalCoin(initialValues.symbol || null);
+		setModalAmount(initialValues.amount || null);
+		setModalPrice(initialValues.price || null);
+	}, [initialValues]);
 	return (
 		<Portal>
 			<Modal
@@ -83,7 +123,6 @@ export default function NewTransactionModal({
 						flex: 1,
 						justifyContent: "center",
 						alignItems: "center",
-						// display: "flex",
 					}}
 				>
 					<Text style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -115,43 +154,26 @@ export default function NewTransactionModal({
 							/>
 						))}
 					</Menu>
-					<Menu
-						visible={menuTypeVisible}
-						onDismiss={() => setMenuTypeVisible(false)}
-						contentStyle={styles.contentStyle}
-						anchor={
-							<TouchableOpacity
-								onPress={() => setMenuTypeVisible(true)}
-								style={styles.menuTouchable}
-							>
-								<Text style={{ color: "#fff" }}>
-									{modalType ? modalType : "Seleccionar tipo"}
-								</Text>
-							</TouchableOpacity>
-						}
+					{/* buy/sell button group */}
+					<RadioButton.Group
+						onValueChange={(newValue: "buy" | "sell") => setModalType(newValue)}
+						value={modalType}
 					>
-						<Menu.Item
-							onPress={() => {
-								setModalType("buy");
-								setMenuTypeVisible(false);
+						<View
+							style={{
+								flexDirection: "row",
+								backgroundColor: "#ebb2b2",
 							}}
-							title="Comprar"
-						/>
-						<Menu.Item
-							onPress={() => {
-								setModalType("sell");
-								setMenuTypeVisible(false);
-							}}
-							title="Vender"
-						/>
-					</Menu>
+						>
+							<RadioButton.Item label="Compra" value="buy" />
+							<RadioButton.Item label="Venta" value="sell" />
+						</View>
+					</RadioButton.Group>
 
 					<TextInput
 						mode="outlined"
 						label={"Precio"}
-						style={{
-							width: 200,
-						}}
+						style={{ width: 200 }}
 						onChangeText={(text) => setModalPrice(text)}
 						value={modalPrice}
 						placeholder="Precio"
@@ -159,24 +181,50 @@ export default function NewTransactionModal({
 					<TextInput
 						mode="outlined"
 						label={"Cantidad"}
-						style={{
-							width: 200,
-						}}
+						style={{ width: 200 }}
 						onChangeText={(text) => setModalAmount(text)}
 						value={modalAmount}
 						placeholder="Cantidad"
 					/>
-					<Button
-						// onPress={addCoin}
-						onPress={() => {
-							addTransaccion();
-							hideModal();
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-around",
+							width: "70%",
 						}}
-						mode="contained"
-						style={{ margin: 10 }}
 					>
-						Agregar
-					</Button>
+						<Button
+							onPress={() => {
+								addTransaccion();
+								hideModal();
+							}}
+							mode="contained"
+							style={{ margin: 10 }}
+						>
+							Agregar
+						</Button>
+						{/* cancel button */}
+						<Button
+							onPress={() => {
+								hideModal();
+							}}
+							mode="contained"
+							style={{ margin: 10 }}
+						>
+							Cancelar
+						</Button>
+					</View>
+					{initialValues.amount && (
+						<Button
+							onPress={() => {
+								hideModal();
+							}}
+							mode="contained"
+							style={{ margin: 0 }}
+						>
+							Delete
+						</Button>
+					)}
 				</View>
 			</Modal>
 		</Portal>
