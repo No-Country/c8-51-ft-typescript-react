@@ -292,6 +292,7 @@ export default function PortfolioScreen() {
 							coins.find((item) => item.symbol === coin.symbol).price || 0;
 						return (
 							<List.Accordion
+								key={coin.symbol}
 								title={coin.symbol}
 								titleStyle={{ color: "#fff" }}
 								style={{

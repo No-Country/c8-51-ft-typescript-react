@@ -19,6 +19,7 @@ import { ICoin } from "./types";
 import AppContext from "./components/AppContext";
 import { useFetchBinance } from "./hooks/useFetchBinance";
 import PortfolioScreen from "./screens/PortfolioScreen";
+import Menu from "./components/Menu";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -52,6 +53,8 @@ export type Theme = typeof theme;
 export default function App() {
 	const [loggedIn] = useState(true);
 	const [coins, setCoins] = useState<ICoin[]>([]);
+	const [showDrawer, setShowDrawer] = useState(false);
+
 	useFetchBinance(coins, setCoins);
 	return (
 		<PaperProvider theme={theme}>
@@ -123,6 +126,7 @@ export default function App() {
 					) : (
 						<LoginScreen />
 					)}
+					{/* <Menu /> */}
 				</NavigationContainer>
 			</AppContext.Provider>
 		</PaperProvider>
