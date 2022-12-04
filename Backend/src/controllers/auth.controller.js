@@ -1,6 +1,7 @@
 const passport = require("passport");
 const UserSchema = require("../schemas/user.schema")
 const bcrypt = require("bcryptjs")
+const jwt = require('jsonwebtoken');
 class AuthController {
 
   async register(req, res) {
@@ -36,16 +37,11 @@ class AuthController {
       if (!user) {
         return res.status(401).json(info)
       }
-      // req.logIn(user, (err) => {
-      //   if (err) {
-      //     console.log(err)
-      //     return res.status(500).json(err)
-      //   }
-      //   return res.status(200).json(user)
-      // })
-      return res.status(200).json(user)
-    }
-    )(req, res)
+      const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET, {
+        expiresIn: 60 * 60 * 24
+      })
+      res.status(200).json({ token })
+    })(req, res)
   }
 }
 

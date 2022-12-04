@@ -9,7 +9,7 @@ const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const User = require('./schemas/user.schema')
-
+const jwt = require('jsonwebtoken');
 require('./db')
 const indexRoutes = require('./routes/index')
 
@@ -47,24 +47,6 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }))
-// passport.use(
-//   new LocalStrategy((username, password, done) => {
-//     User.findOne({ username: username }, (err, user) => {
-//       if (err) {
-//         console.log(err)
-//         return done(err)
-//       }
-//       bcrypt.compare(password, user.password, (err, res) => {
-//         if (res) {
-//           return done(null, user)
-//         } else {
-//           return done(null, false, { message: "Incorrect password" })
-//         }
-//       })
-//     })
-//   })
-// )
-
 
 passport.serializeUser(function (user, done) {
   done(null, user.id);
@@ -104,6 +86,26 @@ passport.use(
     });
   })
 );
+
+app.use((req, res, next) => {
+  // If there is no JWT in the request, continue to the next middleware
+  if (!req.headers.authorization) {
+    return next();
+  }
+
+  // If there is a JWT in the request, verify it using the secret key
+  jwt.verify(req.headers.authorization, secretKey, (err, decoded) => {
+    if (err) {
+      // If the JWT is invalid, return an error
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    // If the JWT is valid, add the decoded user information to the request object
+    req.user = decoded;
+    next();
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 })
