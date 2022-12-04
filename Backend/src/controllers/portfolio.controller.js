@@ -5,12 +5,13 @@ const bcrypt = require("bcryptjs")
 // crud for portfolio
 class PortfolioController {
   async create(req, res) {
-    const { name, symbol, transactions } = req.body
+    const { name, symbol, date, type, amount, price, userID } = req.body
+    console.log(req.body)
     const transaction = new Transaction({
-      date: transactions.date,
-      type: transactions.type,
-      amount: transactions.amount,
-      price: transactions.price
+      date,
+      type,
+      amount,
+      price
     })
     const portfolioCoin = new PortfolioCoin({
       name: name,
@@ -20,8 +21,19 @@ class PortfolioController {
     const portfolio = new Portfolio({
       coins: [portfolioCoin._id]
     })
-    const user = await UserSchema.findById(req.user._id)
-    user.portfolio = portfolio
+    try {
+      await transaction.save()
+      await portfolioCoin.save()
+      await portfolio.save()
+    }
+    catch (err) {
+      console.log(err)
+    }
+    const user = await UserSchema.findById(userID)
+    console.log(user)
+    user.portfolio_id = portfolio._id
+    console.log(user)
+
     user.save().then((user) => {
       res.status(200).json(user)
     }
@@ -31,16 +43,16 @@ class PortfolioController {
     )
   }
   async read(req, res) {
-    const user = await UserSchema.findById(req.user._id).populate("portfolio")
+    const user = await UserSchema.findById(req.body.userID).populate("portfolio")
     res.status(200).json(user)
   }
   async update(req, res) {
-    const { transactions } = req.body
-    Transaction.findByIdAndUpdate(transactions._id, {
-      date: transactions.date,
-      type: transactions.type,
-      amount: transactions.amount,
-      price: transactions.price
+    const { date, type, amount, price, _id } = req.body
+    Transaction.findByIdAndUpdate(_id, {
+      date,
+      type,
+      amount,
+      price
     }, {}, (err, transaction) => {
       if (err) {
         res.status(500).json(err)
@@ -50,8 +62,8 @@ class PortfolioController {
   }
 
   async delete(req, res) {
-    const { transactions } = req.body
-    Transaction.findByIdAndDelete(transactions._id, (err, transaction) => {
+    const { _id } = req.body
+    Transaction.findByIdAndDelete(_id, (err, transaction) => {
       if (err) {
         res.status(500).json(err)
       }
@@ -62,17 +74,18 @@ class PortfolioController {
             if (err) {
               res.status(500).json(err)
             }
-            if (portfolioCoin.transactions.length === 0) {
+            if (portfolioCoin && portfolioCoin.transactions.length === 0) {
               PortfolioCoin.findByIdAndDelete(portfolioCoin._id, (err, portfolioCoin) => {
                 if (err) {
                   res.status(500).json(err)
                 }
-                res.status(200).json(portfolioCoin)
+                res.status(200).json('item deleted')
               })
             }
           }
         )
       }
+      res.status(200).json('item deleted')
     })
   }
 }
