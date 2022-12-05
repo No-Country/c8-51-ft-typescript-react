@@ -6,27 +6,34 @@ const jwt = require("jsonwebtoken");
 
 class AuthController {
   async register(req, res) {
-    const user = new User({
+    const users = await User.find({
       username: req.body.username,
-      password: req.body.password,
     });
+    if (users.length === 0) {
+      const user = new User({
+        username: req.body.username,
+        password: req.body.password,
+      });
 
-    bcrypt.hash(user.password, 10, (err, hash) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json(err);
-      }
-      user.password = hash;
-      user
-        .save()
-        .then((user) => {
-          res.status(200).json(user);
-        })
-        .catch((err) => {
+      bcrypt.hash(user.password, 10, (err, hash) => {
+        if (err) {
           console.error(err);
-          res.status(500).json(err);
-        });
-    });
+          return res.status(500).json(err);
+        }
+        user.password = hash;
+        user
+          .save()
+          .then((user) => {
+            res.status(200).json(user);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json(err);
+          });
+      });
+    } else {
+      res.status(500).json({ message: "User already exists" });
+    }
   }
 
   async login(req, res) {
