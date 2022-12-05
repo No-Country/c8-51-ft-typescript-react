@@ -29,7 +29,6 @@ class AuthController {
       username: req.body.username,
       password: req.body.password
     }, (err, user, info) => {
-      console.log({ err, user, info })
       if (err) {
         console.log(err)
         return res.status(500).json(err)
@@ -40,7 +39,7 @@ class AuthController {
       const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET, {
         expiresIn: 60 * 60 * 24
       })
-      res.status(200).json({ token })
+      res.status(200).json({ token, user })
     })(req, res)
   }
 }

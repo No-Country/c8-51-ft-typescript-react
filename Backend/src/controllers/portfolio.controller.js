@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs")
 class PortfolioController {
   async create(req, res) {
     const { name, symbol, date, type, amount, price, userID } = req.body
-    console.log(req.body)
     const transaction = new Transaction({
       date,
       type,
@@ -30,10 +29,7 @@ class PortfolioController {
       console.log(err)
     }
     const user = await UserSchema.findById(userID)
-    console.log(user)
     user.portfolio_id = portfolio._id
-    console.log(user)
-
     user.save().then((user) => {
       res.status(200).json(user)
     }
