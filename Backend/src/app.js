@@ -1,52 +1,60 @@
-require('dotenv').config();
-bcrypt = require('bcryptjs');
-const express = require('express')
+bcrypt = require("bcryptjs");
+const express = require("express");
 // const path = require('path')
-const cookieParser = require('cookie-parser')
-const createError = require('http-errors')
-const logger = require('morgan')
-const session = require('express-session')
-const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
-const User = require('./schemas/user.schema')
-const jwt = require('jsonwebtoken');
-require('./db')
-const indexRoutes = require('./routes/index')
+const cookieParser = require("cookie-parser");
+const createError = require("http-errors");
+const logger = require("morgan");
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const User = require("./schemas/user.schema");
+const jwt = require("jsonwebtoken");
+require("./db");
+const indexRoutes = require("./routes/index");
+const compression = require("compression");
+const helmet = require("helmet");
 
-const app = express()
-const port = process.env.PORT || 3000
+// set node to production
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
-app.use(logger("dev"))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-// app.use(express.static(path.join(__dirname, "public")))
+const app = express();
+const port = process.env.PORT || 3000;
+app.use(compression());
+app.use(helmet());
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Routes
-app.use('/api', indexRoutes)
+app.use("/api", indexRoutes);
 
-// catch 404 
+// catch 404
 app.use(function (req, res, next) {
-  res.status(404).json({ message: "Not found" })
-})
+  res.status(404).json({ message: "Not found" });
+});
 
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get("env") === "development" ? err : {}
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
-  res.status(err.status || 500)
-  res.render("error")
-})
+  res.status(err.status || 500);
+  res.render("error");
+});
 
 // session
-app.use(session({
-  secret: process.env.SECRET,
-  resave: true,
-  saveUninitialized: true
-}))
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: true,
+    saveUninitialized: true,
+  }),
+);
 
 passport.serializeUser(function (user, done) {
   done(null, user.id);
@@ -61,8 +69,8 @@ app.use(function (req, res, next) {
   res.locals.currentUser = req.user;
   next();
 });
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.use(
   new LocalStrategy((username, password, done) => {
@@ -84,7 +92,7 @@ passport.use(
         }
       });
     });
-  })
+  }),
 );
 
 app.use((req, res, next) => {
@@ -97,7 +105,7 @@ app.use((req, res, next) => {
   jwt.verify(req.headers.authorization, secretKey, (err, decoded) => {
     if (err) {
       // If the JWT is invalid, return an error
-      return res.status(401).json({ error: 'Invalid token' });
+      return res.status(401).json({ error: "Invalid token" });
     }
 
     // If the JWT is valid, add the decoded user information to the request object
@@ -105,14 +113,15 @@ app.use((req, res, next) => {
     next();
   });
 });
-var cors = require('cors')
+var cors = require("cors");
 const corsOptions = {
   origin: true,
   credentials: true,
-}
-app.options('*', cors(corsOptions)); // preflight OPTIONS; put before other routes
+};
+
+app.options("*", cors(corsOptions)); // preflight OPTIONS; put before other routes
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-})
+});
 
-module.exports = app
+module.exports = app;

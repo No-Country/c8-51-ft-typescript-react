@@ -10,7 +10,12 @@ const TransactionSchema = new Schema({
 const PortfolioCoinSchema = new Schema({
   name: { type: String, require: true },
   symbol: { type: String, require: true },
-  transactions: { type: [Schema.Types.ObjectId], require: true, ref: "Transaction" },
+  transactions: {
+    type: [Schema.Types.ObjectId], require: true, ref: "Transaction", populate: {
+      path: "transactions",
+      model: "Transaction",
+    },
+  },
 })
 const PortfolioSchema = new Schema({
   coins: { type: [Schema.Types.ObjectId], require: true, ref: "PortfolioCoin" },
