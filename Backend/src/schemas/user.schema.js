@@ -7,14 +7,14 @@ const UserSchema = new Schema({
   favs_id: { type: Schema.Types.ObjectId, require: false, ref: "Favs" },
   address_id: { type: Schema.Types.ObjectId, require: false, ref: "Address" }
 },
- {
-  toJSON: {
-    transform(doc, ret) {
-      ret.password = undefined;
-      ret.__v = undefined;
+  {
+    toJSON: {
+      transform(doc, ret) {
+        ret.password = undefined;
+        ret.__v = undefined;
+      }
     }
   }
-}
 )
 
 module.exports = model('User', UserSchema)
