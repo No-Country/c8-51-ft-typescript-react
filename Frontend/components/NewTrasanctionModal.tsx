@@ -9,21 +9,16 @@ import {
 	TextInput,
 	ToggleButton,
 	RadioButton,
+	HelperText,
 } from "react-native-paper";
 import { namesForSymbols } from "../hooks/useFetchBinance";
 import { Portfolio, Transaction } from "../screens/PortfolioScreen";
 import { ICoin } from "../types";
 import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
-export default function NewTransactionModal({
-	visible,
-	setVisible,
-	coins,
-	initialValues,
-	hideModal,
-	portfolio,
-	setPortfolio,
-}: {
+interface NewTransactionModalInterface {
 	visible: boolean;
 	setVisible: (visible: boolean) => void;
 	coins: ICoin[];
@@ -36,7 +31,30 @@ export default function NewTransactionModal({
 	};
 	portfolio: Portfolio;
 	setPortfolio: (portfolio: Portfolio) => void;
-}) {
+}
+
+const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
+	symbol: yup.string().required("Symbol is required"),
+	amount: yup
+		.number()
+		.required("Amount is required")
+		.positive("Amount must be positive"),
+	type: yup.string().required("Type is required"),
+	price: yup
+		.number()
+		.required("Price is required")
+		.positive("Price must be positive"),
+});
+
+export default function NewTransactionModal({
+	visible,
+	setVisible,
+	coins,
+	initialValues,
+	hideModal,
+	portfolio,
+	setPortfolio,
+}: NewTransactionModalInterface) {
 	const theme = useTheme();
 	const styles = StyleSheet.create({
 		contentStyle: {
@@ -77,7 +95,7 @@ export default function NewTransactionModal({
 		control,
 		handleSubmit,
 		formState: { errors },
-    setValue,
+		setValue,
 	} = useForm({
 		defaultValues: {
 			symbol: modalCoin,
@@ -85,6 +103,7 @@ export default function NewTransactionModal({
 			type: initialValues.type || null,
 			price: initialValues.price || null,
 		},
+		resolver: yupResolver(validationSchema),
 	});
 
 	const addTransaccion = (data) => {
@@ -95,35 +114,39 @@ export default function NewTransactionModal({
 			amount: parseFloat(data.amount),
 			price: parseFloat(data.price),
 		};
-		if (portfolio.find((coin) => coin.symbol === modalCoin)) {
-			const newPortfolio = portfolio.map((coin) => {
-				if (coin.symbol === modalCoin) {
-					return {
-						...coin,
-						transactions: [...coin.transactions, newTransaction],
-					};
-				}
-				return coin;
+		// request localhost to add transaction
+		// const newPortfolio = { ...portfolio };
+		// newPortfolio[data.symbol].transactions.push(newTransaction);
+		// setPortfolio(newPortfolio);
+		fetch("http://localhost:5050/api/portfolio/create", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				cors: "no-cors",
+			},
+			body: JSON.stringify({
+				name: namesForSymbols[data.symbol],
+				symbol: data.symbol,
+				date: new Date(),
+				amount: data.amount,
+				type: data.type,
+				price: data.price,
+				userID: "638ca579e4152971d5ab5b87",
+			}),
+		})
+			.then((res) => {
+				console.log(res);
+			})
+			.catch((err) => {
+				console.log(err);
 			});
-			setPortfolio(newPortfolio);
-		} else {
-			const newPortfolio = [
-				...portfolio,
-				{
-					symbol: modalCoin,
-					name: namesForSymbols[modalCoin],
-					transactions: [newTransaction],
-				},
-			];
-			setPortfolio(newPortfolio);
-		}
 		hideModal();
 	};
 	useEffect(() => {
 		setModalCoin(initialValues.symbol || null);
-    setValue("type", initialValues.type || null);
-    setValue("amount", initialValues.amount || null);
-    setValue("price", initialValues.price || null);
+		setValue("type", initialValues.type || null);
+		setValue("amount", initialValues.amount || null);
+		setValue("price", initialValues.price || null);
 	}, [initialValues]);
 
 	return (
@@ -187,6 +210,9 @@ export default function NewTransactionModal({
 							</RadioButton.Group>
 						)}
 					/>
+					<HelperText type="error" visible={errors.type ? true : false}>
+						{errors.type && "Selecciona un tipo de transacción"}
+					</HelperText>
 					<Controller
 						name="price"
 						control={control}
@@ -202,6 +228,9 @@ export default function NewTransactionModal({
 							/>
 						)}
 					/>
+          <HelperText type="error" visible={errors.price ? true : false}>
+            {errors.price && "Ingresa un precio"}
+          </HelperText>
 					<Controller
 						name="amount"
 						control={control}
@@ -217,6 +246,9 @@ export default function NewTransactionModal({
 							/>
 						)}
 					/>
+          <HelperText type="error" visible={errors.amount ? true : false}>
+            {errors.amount && "Ingresa una cantidad"}
+          </HelperText>
 					<View
 						style={{
 							flexDirection: "row",
@@ -231,7 +263,6 @@ export default function NewTransactionModal({
 						>
 							Agregar
 						</Button>
-						{/* cancel button */}
 						<Button
 							onPress={() => {
 								hideModal();

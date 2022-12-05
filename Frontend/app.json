@@ -15,11 +15,12 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/b874a3bb-c39a-447f-9e2f-bc55506fe684"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true }
+      }
     },
     "android": {
       "adaptiveIcon": {
