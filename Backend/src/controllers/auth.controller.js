@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 class AuthController {
 
   async register(req, res) {
-    console.log(req.body)
     const user = new UserSchema({
       username: req.body.username,
       password: req.body.password,
@@ -25,6 +24,7 @@ class AuthController {
   }
 
   async login(req, res) {
+    // res.header('Access-Control-Allow-Origin', '*');
     passport.authenticate("local", {
       username: req.body.username,
       password: req.body.password

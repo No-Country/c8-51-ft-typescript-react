@@ -105,7 +105,12 @@ app.use((req, res, next) => {
     next();
   });
 });
-
+var cors = require('cors')
+const corsOptions = {
+  origin: true,
+  credentials: true,
+}
+app.options('*', cors(corsOptions)); // preflight OPTIONS; put before other routes
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 })

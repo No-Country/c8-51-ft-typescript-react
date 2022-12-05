@@ -51,3 +51,5 @@ class FavsController {
     )
   }
 }
+
+module.exports = new FavsController()
