@@ -5,17 +5,18 @@ import {
 	Button,
 	HelperText,
 	withTheme,
-	Portal,
 	ActivityIndicator,
+	Portal,
 } from "react-native-paper";
-import { useForm, Controller, set } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import AppContext from "../components/AppContext";
+import { NavigationContext } from "@react-navigation/native";
 
 type FormData = {
 	username: string;
 	password: string;
+	confirmPassword: string;
 };
 
 const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
@@ -27,12 +28,16 @@ const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
 		.string()
 		.required("Password is required")
 		.min(4, "Password must be at least 4 characters"),
+	confirmPassword: yup
+		.string()
+		.required("Confirm Password is required")
+		.oneOf([yup.ref("password"), null], "Passwords must match"),
 });
-const LoginPage = () => {
-	const { user, setUser } = useContext(AppContext);
+
+export default function RegisterScreen() {
 	const [serverError, setServerError] = useState(null);
-	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 	// use the useForm hook to initialize the form and handle form submissions
 	const {
 		control,
@@ -41,12 +46,12 @@ const LoginPage = () => {
 	} = useForm<FormData>({
 		resolver: yupResolver(validationSchema),
 	});
-
+	const navigation = useContext(NavigationContext);
 	// define the submit handler
 	const onSubmit = (data) => {
 		setLoading(true);
 		fetch(
-			"https://c8-51-ft-typescript-react-production.up.railway.app/api/auth/login",
+			"https://c8-51-ft-typescript-react-production.up.railway.app/api/auth/register",
 			{
 				method: "POST",
 				headers: {
@@ -57,12 +62,12 @@ const LoginPage = () => {
 		)
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data.message);
+				console.log(data);
 				setLoading(false);
 				if (data.message) {
 					setServerError(data.message);
 				} else {
-					setUser(data);
+          navigation.navigate("Login");
 				}
 			})
 			.catch((err) => {
@@ -70,6 +75,7 @@ const LoginPage = () => {
 				setLoading(false);
 			});
 	};
+
 	return (
 		<>
 			{loading && (
@@ -98,6 +104,7 @@ const LoginPage = () => {
 					</View>
 				</Portal>
 			)}
+
 			<View style={styles.container}>
 				<Controller
 					name="username"
@@ -106,17 +113,15 @@ const LoginPage = () => {
 					render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
 							label="Username"
-							mode="outlined"
-							error={errors.username ? true : false}
-							style={styles.input}
-							onBlur={onBlur}
-							value={value}
-							onChangeText={onChange}
 							autoCapitalize="none"
+							onBlur={onBlur}
+							onChangeText={(value) => onChange(value)}
+							mode="outlined"
+							value={value}
 						/>
 					)}
 				/>
-				<HelperText type="error" visible={errors.username ? true : false}>
+				<HelperText type="error" visible={!!errors.username}>
 					{errors.username?.message}
 				</HelperText>
 				<Controller
@@ -125,8 +130,6 @@ const LoginPage = () => {
 					defaultValue=""
 					render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
-							label="Password"
-							mode="outlined"
 							right={
 								<TextInput.Icon
 									icon={showPassword ? "eye" : "eye-off"}
@@ -134,47 +137,58 @@ const LoginPage = () => {
 								/>
 							}
 							secureTextEntry={!showPassword}
-							value={value}
-							error={errors.password ? true : false}
-							style={styles.input}
-							onBlur={onBlur}
-							onChangeText={onChange}
 							autoCapitalize="none"
+							label="Password"
+							onBlur={onBlur}
+							mode="outlined"
+							onChangeText={(value) => onChange(value)}
+							value={value}
 						/>
 					)}
 				/>
-				<HelperText type="error" visible={errors.password ? true : false}>
+				<HelperText type="error" visible={!!errors.password}>
 					{errors.password?.message}
 				</HelperText>
-				<HelperText type="error" visible={serverError ? true : false}>
+				<Controller
+					name="confirmPassword"
+					control={control}
+					defaultValue=""
+					render={({ field: { onChange, onBlur, value } }) => (
+						<TextInput
+							right={
+								<TextInput.Icon
+									icon={showPassword ? "eye" : "eye-off"}
+									onPress={() => setShowPassword(!showPassword)}
+								/>
+							}
+							secureTextEntry={!showPassword}
+							label="Confirm Password"
+							autoCapitalize="none"
+							onBlur={onBlur}
+							onChangeText={(value) => onChange(value)}
+							mode="outlined"
+							value={value}
+						/>
+					)}
+				/>
+				<HelperText type="error" visible={!!errors.confirmPassword}>
+					{errors.confirmPassword?.message}
+				</HelperText>
+				<Button mode="contained" onPress={handleSubmit(onSubmit)}>
+					Register
+				</Button>
+				<HelperText type="error" visible={!!serverError}>
 					{serverError}
 				</HelperText>
-				<Button
-					mode="contained"
-					style={styles.button}
-					onPress={handleSubmit(onSubmit)}
-				>
-					Login
-				</Button>
 			</View>
 		</>
 	);
-};
+}
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: "center",
 		justifyContent: "center",
-	},
-	input: {
-		width: "80%",
-		marginTop: 20,
-	},
-	button: {
-		// width: "80%",
-		marginTop: 20,
+		padding: 20,
 	},
 });
-
-export default withTheme(LoginPage);
