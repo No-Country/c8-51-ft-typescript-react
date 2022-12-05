@@ -10,7 +10,7 @@ class FavsController {
       // Get the favs document that is referenced by the `favs_id` field in the user document
 
       console.log(user)
-      if (user.favs_id !== undefined) {
+      if (user.favs_id ) {
         const favs = user.favs_id;
         // check if the symbol is already in the favs array
         if (favs.favs.includes(symbol)) {
