@@ -1,11 +1,12 @@
 const passport = require("passport");
-const UserSchema = require("../schemas/user.schema");
+const User = require("../schemas/user.schema");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+
 class AuthController {
   async register(req, res) {
-    const user = new UserSchema({
+    const user = new User({
       username: req.body.username,
       password: req.body.password,
     });
@@ -29,6 +30,13 @@ class AuthController {
   }
 
   async login(req, res) {
+    const users = await User.find({
+      username: req.body.username,
+    });
+    if (users.length === 0) {
+      // Return an error if the user doesn't exist
+      return res.status(401).json({ message: "Invalid username" });
+    }
     passport.authenticate(
       "local",
       {
