@@ -56,13 +56,13 @@ const LoginPage = () => {
 			},
 		)
 			.then((res) => res.json())
-			.then((data) => {
-				console.log(data.message);
+    .then((data) => {
 				setLoading(false);
 				if (data.message) {
 					setServerError(data.message);
 				} else {
 					setUser(data);
+          console.log(data)
 				}
 			})
 			.catch((err) => {

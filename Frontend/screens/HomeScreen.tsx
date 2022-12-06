@@ -47,17 +47,104 @@ const cryptoJson: ICoin[] = [
 
 function Home({ navigation }: any) {
 	const theme = useTheme<Theme>();
-	const { coins, setCoins } = useContext(AppContext);
+	const { coins, setCoins, user } = useContext(AppContext);
+	const [favs, setFavs] = useState<ICoin[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const isFavCallback = (symbol: string) => {
-		const newAllCoins = coins.map((item) => {
-			if (item.symbol === symbol) {
-				item.isFav = !item.isFav;
-			}
-			return item;
-		});
-		setCoins(newAllCoins);
+		if (favs.find((item) => item.symbol === symbol)) {
+			console.log("found");
+			console.log(favs);
+			const newFavs = favs.filter((item) => item.symbol !== symbol);
+			setFavs(newFavs);
+			setCoins(
+				coins.map((item) => {
+					if (item.symbol === symbol) {
+						return { ...item, isFav: false };
+					}
+					return item;
+				}),
+			);
+			fetch(
+				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/delete",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						userID: user.user[0]._id,
+						symbol: symbol,
+					}),
+				},
+			)
+				.then((res) => res.json())
+				.then((data) => console.log(data))
+				.catch((err) => console.log(err));
+			return;
+		}
+		const newCoin = coins.find((item) => item.symbol === symbol)!;
+		newCoin.isFav = true;
+		setFavs([...favs, newCoin]);
+		setCoins(
+			coins.map((item) => {
+				if (item.symbol === symbol) {
+					return { ...item, isFav: true };
+				}
+				return item;
+			}),
+		);
+		fetch(
+			"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/create",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					userID: user.user[0]._id,
+					symbol: symbol,
+				}),
+			},
+		)
+			.then((res) => res.json())
+			.then((data) => console.log(data))
+			.catch((err) => console.log(err));
 	};
+	useEffect(() => {
+		fetch(
+			"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/read",
+			{
+				method: "POST", //should be get
+				body: JSON.stringify({ userID: user.user[0]._id }),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			},
+		)
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("data", data);
+				if (!data.message) {
+					setFavs(
+						coins.filter((item) => {
+							// data.favs_id.favs;
+							if (data.favs_id.favs.includes(item.symbol)) {
+								return { ...item, isFav: true };
+							}
+						}),
+					);
+					setCoins(
+						coins.map((item) => {
+							if (data.favs_id.favs.includes(item.symbol)) {
+								return { ...item, isFav: true };
+							}
+							return item;
+						}),
+					);
+				}
+			})
+			.catch((err) => console.log(err));
+	}, []);
 
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);
@@ -82,12 +169,7 @@ function Home({ navigation }: any) {
 							{() => <CryptoList items={coins} isFavCallback={isFavCallback} />}
 						</Tab.Screen>
 						<Tab.Screen name='Favs'>
-							{() => (
-								<CryptoList
-									items={coins.filter((item) => item.isFav)}
-									isFavCallback={isFavCallback}
-								/>
-							)}
+							{() => <CryptoList items={favs} isFavCallback={isFavCallback} />}
 						</Tab.Screen>
 					</Tab.Navigator>
 				</View>

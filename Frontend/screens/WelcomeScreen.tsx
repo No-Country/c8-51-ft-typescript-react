@@ -16,7 +16,6 @@ function WelcomeScreen() {
 	const [visible, setVisible] = React.useState(false);
 	const openMenu = () => setVisible(true);
 	const closeMenu = () => setVisible(false);
-	console.log(user);
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
