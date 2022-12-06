@@ -16,53 +16,104 @@ class PortfolioController {
       amount,
       price,
     });
-    const portfolioCoin = new PortfolioCoin({
-      name,
-      symbol,
-      transactions: [transaction._id],
-    });
-    const portfolio = new Portfolio({
-      coins: [portfolioCoin._id],
-    });
-    try {
-      const user = await UserSchema.findById(userID);
-      // if user have a portfolio
-      if (user.portfolio_id) {
-        const userPortfolio = await Portfolio.findById(user.portfolio_id);
-        const userPortfolioCoin = await PortfolioCoin.findOne({
+    // create portfolio coin or find it
+
+    const user = await UserSchema.findById(userID);
+    // if user have a portfolio
+    if (user.portfolio_id) {
+      const userPortfolio = await Portfolio.findById(user.portfolio_id).populate('coins');
+      // if user have a portfolio coin
+      const userPortfolioCoin = userPortfolio.coins.filter(coin => coin.name === name && coin.symbol === symbol)
+      console.log(userPortfolioCoin.length > 0)
+      await transaction.save();
+      if (userPortfolioCoin.length > 0) {
+        console.log(userPortfolioCoin)
+        userPortfolioCoin[0].transactions.push(transaction._id);
+        console.log(userPortfolioCoin)
+        await userPortfolioCoin[0].save();
+      } else {
+        const portfolioCoin = new PortfolioCoin({
           name,
           symbol,
+          transactions: [transaction._id],
         });
-        // if user have a portfolio coin
-        if (userPortfolioCoin) {
-          await transaction.save();
-          userPortfolioCoin.transactions.push(transaction._id);
-          await userPortfolioCoin.save();
-        } else {
-          await portfolioCoin.save();
-          userPortfolio.coins.push(portfolioCoin._id);
-          await userPortfolio.save();
-        }
-      }
-      else {
-        await portfolio.save();
-        await transaction.save();
         await portfolioCoin.save();
-        user.portfolio_id = portfolio._id;
+        userPortfolio.coins.push(portfolioCoin._id);
+        userPortfolio.save();
       }
-      user
-        .save()
-        .then((user) => {
-          res.status(200).json(user);
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(500).json(err);
-        });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json(err);
     }
+    else {
+      const portfolioCoin = new PortfolioCoin({
+        name,
+        symbol,
+        transactions: [transaction._id],
+      });
+      const portfolio = new Portfolio({
+        coins: [portfolioCoin._id],
+      });
+      await portfolio.save();
+      await transaction.save();
+      await portfolioCoin.save();
+      user.portfolio_id = portfolio._id;
+    }
+    user
+      .save()
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).json(err);
+      });
+
+    // const portfolioCoin = new PortfolioCoin({
+    //   name,
+    //   symbol,
+    //   transactions: [transaction._id],
+    // });
+    // const portfolio = new Portfolio({
+    //   coins: [portfolioCoin._id],
+    // });
+    // try {
+    //   const user = await UserSchema.findById(userID);
+    //   // if user have a portfolio
+    //   if (user.portfolio_id) {
+    //     const userPortfolio = await Portfolio.findById(user.portfolio_id);
+    //     console.log(userPortfolio)
+    //     const userPortfolioCoin = await PortfolioCoin.findOne({
+    //       name,
+    //       symbol,
+    //     });
+    //     // if user have a portfolio coin
+    //     if (portfolio.coins) {
+    //       await transaction.save();
+    //       userPortfolioCoin.transactions.push(transaction._id);
+    //       await userPortfolioCoin.save();
+    //     } else {
+    //       await portfolioCoin.save();
+    //       userPortfolio.coins.push(portfolioCoin._id);
+    //       await userPortfolio.save();
+    //     }
+    //   }
+    //   else {
+    //     await portfolio.save();
+    //     await transaction.save();
+    //     await portfolioCoin.save();
+    //     user.portfolio_id = portfolio._id;
+    //   }
+    //   user
+    //     .save()
+    //     .then((user) => {
+    //       res.status(200).json(user);
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //       res.status(500).json(err);
+    //     });
+    // } catch (err) {
+    //   console.error(err);
+    //   return res.status(500).json(err);
+    // }
   }
   async read(req, res) {
     try {
