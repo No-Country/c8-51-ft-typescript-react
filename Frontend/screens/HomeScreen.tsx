@@ -15,12 +15,13 @@ import { Theme } from "../App";
 import { ICoin } from "../types";
 import CryptoList from "../components/CryptoList";
 import Search from "../components/Search";
-import { useFetchBinance } from "../hooks/useFetchBinance";
 import AppContext from "../components/AppContext";
 import DetailScreen from "./DetailScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 const Tab = createMaterialTopTabNavigator();
-// import BottomNav from '../components/BottomNav';
+
+const Stack = createNativeStackNavigator();
+
 const cryptoJson: ICoin[] = [
 	{
 		name: "Bitcoin",
@@ -45,17 +46,22 @@ const cryptoJson: ICoin[] = [
 	},
 ];
 
-function Home({ navigation }: any) {
+const filterCoins = (coins: ICoin[], query: string) => {
+	if (query === "") {
+		return coins;
+	}
+	return coins.filter((coin) => {
+		return coin.name.toLowerCase().includes(query.toLowerCase());
+	});
+};
+
+function Home() {
 	const theme = useTheme<Theme>();
 	const { coins, setCoins, user } = useContext(AppContext);
-	const [favs, setFavs] = useState<ICoin[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const isFavCallback = (symbol: string) => {
-		if (favs.find((item) => item.symbol === symbol)) {
+		if (coins.find((item) => item.symbol === symbol && item.isFav)) {
 			console.log("found");
-			console.log(favs);
-			const newFavs = favs.filter((item) => item.symbol !== symbol);
-			setFavs(newFavs);
 			setCoins(
 				coins.map((item) => {
 					if (item.symbol === symbol) {
@@ -84,7 +90,6 @@ function Home({ navigation }: any) {
 		}
 		const newCoin = coins.find((item) => item.symbol === symbol)!;
 		newCoin.isFav = true;
-		setFavs([...favs, newCoin]);
 		setCoins(
 			coins.map((item) => {
 				if (item.symbol === symbol) {
@@ -125,14 +130,6 @@ function Home({ navigation }: any) {
 			.then((data) => {
 				console.log("data", data);
 				if (!data.message) {
-					setFavs(
-						coins.filter((item) => {
-							// data.favs_id.favs;
-							if (data.favs_id.favs.includes(item.symbol)) {
-								return { ...item, isFav: true };
-							}
-						}),
-					);
 					setCoins(
 						coins.map((item) => {
 							if (data.favs_id.favs.includes(item.symbol)) {
@@ -148,13 +145,6 @@ function Home({ navigation }: any) {
 
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);
-		setCoins(
-			cryptoJson.filter(
-				(item) =>
-					item.name.toLowerCase().includes(query.toLowerCase()) ||
-					item.symbol.toLowerCase().includes(query.toLowerCase()),
-			),
-		);
 	};
 
 	return (
@@ -166,10 +156,22 @@ function Home({ navigation }: any) {
 				<View style={styles.containerContainer}>
 					<Tab.Navigator>
 						<Tab.Screen name='All'>
-							{() => <CryptoList items={coins} isFavCallback={isFavCallback} />}
+							{() => (
+								<CryptoList
+									items={filterCoins(coins, searchQuery)}
+									isFavCallback={isFavCallback}
+								/>
+							)}
 						</Tab.Screen>
 						<Tab.Screen name='Favs'>
-							{() => <CryptoList items={favs} isFavCallback={isFavCallback} />}
+							{() => (
+								<CryptoList
+									items={filterCoins(coins, searchQuery).filter(
+										(item) => item.isFav,
+									)}
+									isFavCallback={isFavCallback}
+								/>
+							)}
 						</Tab.Screen>
 					</Tab.Navigator>
 				</View>
@@ -177,9 +179,6 @@ function Home({ navigation }: any) {
 		</>
 	);
 }
-
-const Stack = createNativeStackNavigator();
-
 const StackNavigator = () => {
 	return (
 		<Stack.Navigator
@@ -196,7 +195,6 @@ const StackNavigator = () => {
 		</Stack.Navigator>
 	);
 };
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -204,4 +202,4 @@ const styles = StyleSheet.create({
 	containerContainer: { height: "100%" },
 });
 
-export default withTheme(StackNavigator);
+export default StackNavigator;

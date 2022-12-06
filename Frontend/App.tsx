@@ -64,7 +64,17 @@ export default function App() {
 	const [coins, setCoins] = useState<ICoin[]>([]);
 
 	// const [user, setUser] = useState<User>(null);
-  const [user, setUser] = useState<User>({"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNjY2NjUsImV4cCI6MTY3MDM1MzA2NX0.uj1AbdAE9tnNC0TFpDbxu3e7KDU45TZKmB8w490MdWA", "user": [{"_id": "638ca579e4152971d5ab5b87", "portfolio_id": "638df1ef9297239c3f9fb3ec", "username": "test1"}]});
+	const [user, setUser] = useState<User>({
+		token:
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNjY2NjUsImV4cCI6MTY3MDM1MzA2NX0.uj1AbdAE9tnNC0TFpDbxu3e7KDU45TZKmB8w490MdWA",
+		user: [
+			{
+				_id: "638ca579e4152971d5ab5b87",
+				portfolio_id: "638df1ef9297239c3f9fb3ec",
+				username: "test1",
+			},
+		],
+	});
 	useFetchBinance(coins, setCoins);
 	return (
 		<PaperProvider theme={theme}>
@@ -72,21 +82,6 @@ export default function App() {
 				<NavigationContainer>
 					{user ? (
 						<Tab.Navigator>
-							<Tab.Screen
-								name="Portfolio"
-								component={PortfolioScreen}
-								options={{
-									tabBarLabel: () => null,
-									headerShown: false,
-									tabBarIcon: ({ color, size }) => (
-										<MaterialCommunityIcons
-											name="chart-line"
-											color={theme.colors.primary}
-											size={size}
-										/>
-									),
-								}}
-							/>
 							<Tab.Screen
 								name="HomeScreen"
 								component={HomeScreen}
@@ -96,6 +91,21 @@ export default function App() {
 									tabBarIcon: ({ size }) => (
 										<MaterialCommunityIcons
 											name="home"
+											color={theme.colors.primary}
+											size={size}
+										/>
+									),
+								}}
+							/>
+							<Tab.Screen
+								name="Portfolio"
+								component={PortfolioScreen}
+								options={{
+									tabBarLabel: () => null,
+									headerShown: false,
+									tabBarIcon: ({ color, size }) => (
+										<MaterialCommunityIcons
+											name="chart-line"
 											color={theme.colors.primary}
 											size={size}
 										/>

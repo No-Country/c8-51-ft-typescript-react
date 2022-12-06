@@ -20,6 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContext } from "@react-navigation/native";
 import { ICoin } from "../types";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { ActivityIndicator, Portal } from "react-native-paper";
 
 const binanceKlinesUrl = (symbol) => {
 	return `https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=1d&limit=30`;
@@ -61,6 +62,28 @@ const DetailScreen = (params) => {
 	const Chart = () => {
 		return (
 			<>
+				{isLoading && (
+					<Portal>
+						<View
+							style={{
+								position: "absolute",
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								justifyContent: "center",
+								alignItems: "center",
+								backgroundColor: "rgba(0,0,0,0.5)",
+							}}
+						>
+							<ActivityIndicator
+								animating={true}
+								size="large"
+								style={{ position: "absolute" }}
+							/>
+						</View>
+					</Portal>
+				)}
 				<LineChart
 					data={{
 						labels: data

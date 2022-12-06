@@ -9,12 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
 import { ICoin } from "../types";
-import {
-	FAB,
-	List,
-	Portal,
-	useTheme,
-} from "react-native-paper";
+import { FAB, List, Portal, useTheme } from "react-native-paper";
 import NewTransactionModal from "../components/NewTrasanctionModal";
 export interface Transaction {
 	date: Date;

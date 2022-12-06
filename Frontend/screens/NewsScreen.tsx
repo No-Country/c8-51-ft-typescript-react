@@ -4,6 +4,7 @@ import {
 	TouchableOpacity,
 	ScrollViewComponent,
 	ScrollView,
+	Linking,
 	FlatList,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
 
 function NewsCard({ news, isBookmarkedCallback }) {
 	const theme = useTheme<Theme>();
-	const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
+	// const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
 	return (
 		<View style={{ flex: 1, marginTop: 8 }}>
 			<Card mode="elevated" style={{ backgroundColor: theme.colors.light }}>
@@ -112,14 +113,14 @@ function NewsCard({ news, isBookmarkedCallback }) {
 						top: 0,
 					}}
 				>
-					<IconButton
+					{/* <IconButton
 						icon={isBookmarked ? "bookmark" : "bookmark-outline"}
 						iconColor={theme.colors.light}
 						onPress={() => {
 							setIsBookmarked(!isBookmarked);
 							isBookmarkedCallback(news.id);
 						}}
-					/>
+					/> */}
 				</View>
 			</Card>
 		</View>
@@ -138,7 +139,7 @@ export default function NewsSceeen() {
 		setSearchQuery(query);
 		if (query.length > 0) {
 			setNewsArticles(
-				NewsJson.filter(
+				newsArticles.filter(
 					(news) =>
 						news.tittle.toLowerCase().includes(query.toLowerCase()) ||
 						news.paragraph.toLowerCase().includes(query.toLowerCase()),
@@ -146,14 +147,7 @@ export default function NewsSceeen() {
 			);
 		}
 	};
-	const onToggleFav = () => {
-		setOnlyFav(!onlyFav);
-		if (onlyFav) {
-			setNewsArticles(NewsJson.filter((news) => news.isFav));
-		} else {
-			setNewsArticles(NewsJson);
-		}
-	};
+
 	const isBookmarkedCallback = (id: number) => {
 		setNewsArticles(
 			newsArticles.map((news) => {
@@ -178,11 +172,11 @@ export default function NewsSceeen() {
 					<View style={{ flex: 1 }}>
 						<Search value={searchQuery} onChangeText={onChangeSearch} />
 					</View>
-					<IconButton
+					{/* <IconButton
 						icon='bookmark'
 						iconColor={onlyFav ? theme.colors.dark : theme.colors.primary}
 						onPress={onToggleFav}
-					/>
+					/> */}
 				</View>
 				<FlatList
 					style={{
@@ -191,7 +185,12 @@ export default function NewsSceeen() {
 					}}
 					data={newsArticles}
 					renderItem={({ item }) => (
-						<NewsCard news={item} isBookmarkedCallback={isBookmarkedCallback} />
+						<TouchableOpacity onPress={() => Linking.openURL(item.url)}>
+							<NewsCard
+								news={item}
+								isBookmarkedCallback={isBookmarkedCallback}
+							/>
+						</TouchableOpacity>
 					)}
 					keyExtractor={(item) => item.id.toString()}
 					onEndReached={() => {
