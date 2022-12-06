@@ -9,7 +9,13 @@ import {
 import React, { useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
 import { ICoin } from "../types";
-import { FAB, List, Portal, useTheme } from "react-native-paper";
+import {
+	ActivityIndicator,
+	FAB,
+	List,
+	Portal,
+	useTheme,
+} from "react-native-paper";
 import NewTransactionModal from "../components/NewTrasanctionModal";
 export interface Transaction {
 	date: Date;
@@ -104,13 +110,60 @@ export default function PortfolioScreen() {
 			margin: 10,
 		},
 	});
-	const { coins } = React.useContext(AppContext || null);
-	const [portfolio, setPortfolio] = useState(PortfolioJson);
+	const { coins, user } = React.useContext(AppContext || null);
+	const [portfolio, setPortfolio] = useState([]);
+	const [loading, setLoading] = useState(true);
+	useEffect(() => {
+		if (loading) {
+			console.log("loading portfolios");
+			fetch(
+				"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/read",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						cors: "no-cors",
+					},
+					body: JSON.stringify({
+						// userID: user.user[0].portfolio_id,
+						portfolioID: user.user[0].portfolio_id,
+					}),
+				},
+			)
+				.then((res) => {
+					return res.json();
+				})
+				.then((data) => {
+					console.log(data.coins[0].transactions);
+					setLoading(false);
+					setPortfolio(
+						data.coins.map((coin: any) => {
+							return {
+								name: coin.name,
+								symbol: coin.symbol,
+								transactions: coin.transactions.map((transaction: any) => {
+									return {
+										date: new Date(transaction.date),
+										type: transaction.type,
+										amount: Number(transaction.amount),
+										price: Number(transaction.price),
+									};
+								}),
+							};
+						}),
+					);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}, [loading]);
 	let gananciaTotal = 0;
 	let portfolioTotal = 0;
 	let amount;
 	let gananciaDelDia = 0;
 	if (coins.length > 0) {
+		console.log("portfolio", portfolio);
 		portfolio.forEach((item) => {
 			let totalUSDofSell = 0;
 			let totalUSDofBuy = 0;
@@ -250,6 +303,7 @@ export default function PortfolioScreen() {
 					setPortfolio={setPortfolio}
 					coins={coins}
 					initialValues={initialModalValues}
+					setLoading={setLoading}
 				/>
 
 				<ScrollView
@@ -404,6 +458,32 @@ export default function PortfolioScreen() {
 
 	return (
 		<SafeAreaView style={{ display: "flex" }}>
+			{loading && (
+				<Portal>
+					<View
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							backgroundColor: "rgba(0,0,0,0.3)",
+						}}
+					>
+						<ActivityIndicator
+							animating={true}
+							color="white"
+							size="large"
+							style={{
+								position: "absolute",
+								top: "50%",
+								left: "50%",
+								transform: [{ translateX: -25 }, { translateY: -25 }],
+							}}
+						/>
+					</View>
+				</Portal>
+			)}
 			{coins.length > 0 && (
 				<>
 					<CarteraCard />

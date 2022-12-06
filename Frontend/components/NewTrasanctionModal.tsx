@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import {
 	useTheme,
@@ -16,6 +16,7 @@ import { ICoin } from "../types";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import AppContext from "./AppContext";
 
 interface NewTransactionModalInterface {
 	visible: boolean;
@@ -30,10 +31,10 @@ interface NewTransactionModalInterface {
 	};
 	portfolio: Portfolio;
 	setPortfolio: (portfolio: Portfolio) => void;
+	setLoading: (loading: boolean) => void;
 }
 
 const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
-	symbol: yup.string().required("Symbol is required"),
 	amount: yup
 		.number()
 		.required("Amount is required")
@@ -53,6 +54,7 @@ export default function NewTransactionModal({
 	hideModal,
 	portfolio,
 	setPortfolio,
+	setLoading,
 }: NewTransactionModalInterface) {
 	const theme = useTheme();
 	const styles = StyleSheet.create({
@@ -85,6 +87,7 @@ export default function NewTransactionModal({
 	const [modalType, setModalType] = useState<"buy" | "sell">(
 		initialValues.type || null,
 	);
+	const { user, setUser } = useContext(AppContext);
 	const [modalCoin, setModalCoin] = useState(initialValues.symbol || null);
 	const [modalAmount, setModalAmount] = useState(initialValues.amount || null);
 	const [modalPrice, setModalPrice] = useState(initialValues.price || null);
@@ -96,7 +99,6 @@ export default function NewTransactionModal({
 		setValue,
 	} = useForm({
 		defaultValues: {
-			symbol: modalCoin,
 			amount: initialValues.amount || null,
 			type: initialValues.type || null,
 			price: initialValues.price || null,
@@ -104,47 +106,58 @@ export default function NewTransactionModal({
 		resolver: yupResolver(validationSchema),
 	});
 
-	const addTransaccion = (data) => {
-		const newTransaction: Transaction = {
-			date: new Date(),
-			type: data.type,
-			amount: parseFloat(data.amount),
-			price: parseFloat(data.price),
-		};
-		// request localhost to add transaction
-		// const newPortfolio = { ...portfolio };
-		// newPortfolio[data.symbol].transactions.push(newTransaction);
-		// setPortfolio(newPortfolio);
-		fetch("http://localhost:5050/api/portfolio/create", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				cors: "no-cors",
-			},
-			body: JSON.stringify({
-				name: namesForSymbols[data.symbol],
-				symbol: data.symbol,
-				date: new Date(),
-				amount: data.amount,
-				type: data.type,
-				price: data.price,
-				userID: "638ca579e4152971d5ab5b87",
-			}),
-		})
-			.then((res) => {
-				console.log(res);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-		hideModal();
-	};
 	useEffect(() => {
 		setModalCoin(initialValues.symbol || null);
 		setValue("type", initialValues.type || null);
 		setValue("amount", initialValues.amount || null);
 		setValue("price", initialValues.price || null);
 	}, [initialValues]);
+	function addTransaction(data) {
+		console.log("submit", data);
+		console.log("json", {
+			name: namesForSymbols[modalCoin],
+			symbol: modalCoin,
+			date: new Date(),
+			userID: user.user[0]._id,
+			amount: data.amount,
+			price: data.price,
+			type: data.type,
+		});
+		fetch(
+			"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/create",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					cors: "no-cors",
+				},
+				body: JSON.stringify({
+					name: namesForSymbols[modalCoin],
+					symbol: modalCoin,
+					date: "1/1/2020",
+					userID: user.user[0]._id,
+					amount: data.amount,
+					price: data.price,
+					type: data.type,
+				}),
+			},
+		)
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				console.log(data);
+				// update the portfolio_id in the user
+				setLoading(true);
+				let newUser = { ...user };
+				newUser.user[0].portfolio_id = data.portfolio_id;
+				setUser(newUser);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		hideModal();
+	}
 
 	return (
 		<Portal>
@@ -225,9 +238,9 @@ export default function NewTransactionModal({
 							/>
 						)}
 					/>
-          <HelperText type="error" visible={errors.price ? true : false}>
-            {errors.price && "Ingresa un precio"}
-          </HelperText>
+					<HelperText type="error" visible={errors.price ? true : false}>
+						{errors.price && "Ingresa un precio"}
+					</HelperText>
 					<Controller
 						name="amount"
 						control={control}
@@ -243,9 +256,9 @@ export default function NewTransactionModal({
 							/>
 						)}
 					/>
-          <HelperText type="error" visible={errors.amount ? true : false}>
-            {errors.amount && "Ingresa una cantidad"}
-          </HelperText>
+					<HelperText type="error" visible={errors.amount ? true : false}>
+						{errors.amount && "Ingresa una cantidad"}
+					</HelperText>
 					<View
 						style={{
 							flexDirection: "row",
@@ -254,7 +267,7 @@ export default function NewTransactionModal({
 						}}
 					>
 						<Button
-							onPress={handleSubmit(addTransaccion)}
+							onPress={handleSubmit(addTransaction)}
 							mode="contained"
 							style={{ margin: 10 }}
 						>
