@@ -25,10 +25,30 @@ class PortfolioController {
       coins: [portfolioCoin._id],
     });
     try {
-      await transaction.save();
-      await portfolioCoin.save();
-      await portfolio.save();
       const user = await UserSchema.findById(userID);
+      // if user have a portfolio
+      if (user.portfolio_id) {
+        const userPortfolio = await Portfolio.findById(user.portfolio_id);
+        const userPortfolioCoin = await PortfolioCoin.findOne({
+          name,
+          symbol,
+        });
+        // if user have a portfolio coin
+        if (userPortfolioCoin) {
+          await transaction.save();
+          userPortfolioCoin.transactions.push(transaction._id);
+          await userPortfolioCoin.save();
+        } else {
+          await portfolioCoin.save();
+          userPortfolio.coins.push(portfolioCoin._id);
+          await userPortfolio.save();
+        }
+      }
+      else {
+        await portfolio.save();
+        await transaction.save();
+        await portfolioCoin.save();
+      }
       user.portfolio_id = portfolio._id;
       user
         .save()
@@ -47,25 +67,25 @@ class PortfolioController {
   async read(req, res) {
     try {
       UserSchema.findById(req.body.userID)
-      .populate({
-        path: "portfolio_id",
-        populate: {
-          path: "coins",
-          model: "PortfolioCoin",
+        .populate({
+          path: "portfolio_id",
           populate: {
-            path: "transactions",
-            model: "Transaction",
+            path: "coins",
+            model: "PortfolioCoin",
+            populate: {
+              path: "transactions",
+              model: "Transaction",
+            },
           },
-        },
-      })
-      .exec((err, user) => {
-        console.log(user);
-        if (err) {
-          console.error(err);
-          return res.status(500).json(err);
-        }
-        res.status(200).json(user);
-      });
+        })
+        .exec((err, user) => {
+          console.log(user);
+          if (err) {
+            console.error(err);
+            return res.status(500).json(err);
+          }
+          res.status(200).json(user);
+        });
     }
     catch (err) {
       console.error(err);
