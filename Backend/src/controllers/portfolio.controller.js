@@ -48,8 +48,8 @@ class PortfolioController {
         await portfolio.save();
         await transaction.save();
         await portfolioCoin.save();
+        user.portfolio_id = portfolio._id;
       }
-      user.portfolio_id = portfolio._id;
       user
         .save()
         .then((user) => {
@@ -66,7 +66,7 @@ class PortfolioController {
   }
   async read(req, res) {
     try {
-      const portfolio = await Portfolio.findById(req.body.portfolioID). 
+      const portfolio = await Portfolio.findById(req.body.portfolioID).
         populate({
           path: "coins",
           model: "PortfolioCoin",
@@ -75,7 +75,7 @@ class PortfolioController {
             model: "Transaction",
           },
         });
-        console.log(portfolio)
+      console.log(portfolio)
       res.status(200).json(portfolio);
     }
     catch (err) {
