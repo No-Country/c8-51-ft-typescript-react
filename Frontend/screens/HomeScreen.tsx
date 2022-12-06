@@ -59,6 +59,7 @@ function Home() {
 	const theme = useTheme<Theme>();
 	const { coins, setCoins, user } = useContext(AppContext);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [loading, setLoading] = useState(true);
 	const isFavCallback = (symbol: string) => {
 		if (coins.find((item) => item.symbol === symbol && item.isFav)) {
 			console.log("found");
@@ -116,32 +117,37 @@ function Home() {
 			.catch((err) => console.log(err));
 	};
 	useEffect(() => {
-		fetch(
-			"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/read",
-			{
-				method: "POST", //should be get
-				body: JSON.stringify({ userID: user.user[0]._id }),
-				headers: {
-					"Content-Type": "application/json",
+		if (loading && coins.length > 0) {
+			fetch(
+				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/read",
+				{
+					method: "POST", //should be get
+					body: JSON.stringify({ userID: user.user[0]._id }),
+					headers: {
+						"Content-Type": "application/json",
+					},
 				},
-			},
-		)
-			.then((res) => res.json())
-			.then((data) => {
-				console.log("data", data);
-				if (!data.message) {
-					setCoins(
-						coins.map((item) => {
+			)
+				.then((res) => res.json())
+				.then((data) => {
+					if (!data.message) {
+						const newCoins: ICoin[] = coins.map((item) => {
 							if (data.favs_id.favs.includes(item.symbol)) {
 								return { ...item, isFav: true };
 							}
-							return item;
-						}),
-					);
-				}
-			})
-			.catch((err) => console.log(err));
-	}, []);
+							return { ...item, isFav: false };
+						});
+
+						setCoins(newCoins);
+					}
+					setLoading(false);
+				})
+				.catch((err) => {
+					console.log(err);
+					setLoading(false);
+				});
+		}
+	}, [coins, loading, setCoins, user.user]);
 
 	const onChangeSearch = (query) => {
 		setSearchQuery(query);

@@ -41,12 +41,12 @@ type Kline = [
 ];
 
 const DetailScreen = (params) => {
-	const navigation = React.useContext(NavigationContext);
+	// const navigation = React.useContext(NavigationContext);
 	console.log("coin", params.route.params);
 	const coin = params.route.params.coin as ICoin;
 	const [data, setData] = React.useState<Kline[]>([]);
 	const [isLoading, setIsLoading] = React.useState(true);
-	navigation.setOptions({ title: `${coin.symbol} Details` });
+	// navigation.setOptions({ title: `${coin.symbol} Details` });
 	React.useEffect(() => {
 		if (isLoading && coin.symbol) {
 			fetch(binanceKlinesUrl(coin.symbol))
