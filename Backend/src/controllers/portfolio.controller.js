@@ -66,26 +66,17 @@ class PortfolioController {
   }
   async read(req, res) {
     try {
-      UserSchema.findById(req.body.userID)
-        .populate({
-          path: "portfolio_id",
+      const portfolio = await Portfolio.findById(req.body.portfolioID). 
+        populate({
+          path: "coins",
+          model: "PortfolioCoin",
           populate: {
-            path: "coins",
-            model: "PortfolioCoin",
-            populate: {
-              path: "transactions",
-              model: "Transaction",
-            },
+            path: "transactions",
+            model: "Transaction",
           },
-        })
-        .exec((err, user) => {
-          console.log(user);
-          if (err) {
-            console.error(err);
-            return res.status(500).json(err);
-          }
-          res.status(200).json(user);
         });
+        console.log(portfolio)
+      res.status(200).json(portfolio);
     }
     catch (err) {
       console.error(err);
