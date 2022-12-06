@@ -26,12 +26,24 @@ class PortfolioController {
       // console.log(userPortfolio)
       // console.log(userPortfolioCoin.length > 0)
       await transaction.save();
-      if ( userPortfolio?.coins !== undefined && userPortfolio.coins.length > 0) {
+      if (userPortfolio?.coins !== undefined && userPortfolio.coins.length > 0) {
         const userPortfolioCoin = userPortfolio.coins.filter(coin => coin.name === name && coin.symbol === symbol)
         console.log(userPortfolioCoin)
-        userPortfolioCoin[0].transactions.push(transaction._id);
-        console.log(userPortfolioCoin)
-        await userPortfolioCoin[0].save();
+        if (userPortfolioCoin.length > 0) {
+          userPortfolioCoin[0].transactions.push(transaction._id);
+          console.log(userPortfolioCoin)
+          await userPortfolioCoin[0].save();
+        }
+        else {
+          const portfolioCoin = new PortfolioCoin({
+            name,
+            symbol,
+            transactions: [transaction._id],
+          });
+          await portfolioCoin.save();
+          userPortfolio.coins.push(portfolioCoin._id);
+          userPortfolio.save();
+        }
       } else {
         const portfolioCoin = new PortfolioCoin({
           name,
