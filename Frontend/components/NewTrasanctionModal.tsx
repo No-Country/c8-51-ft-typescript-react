@@ -7,7 +7,6 @@ import {
 	Button,
 	Modal,
 	TextInput,
-	ToggleButton,
 	RadioButton,
 	HelperText,
 } from "react-native-paper";
@@ -90,7 +89,6 @@ export default function NewTransactionModal({
 	const [modalAmount, setModalAmount] = useState(initialValues.amount || null);
 	const [modalPrice, setModalPrice] = useState(initialValues.price || null);
 	const [menuSymbolVisible, setMenuSymbolVisible] = useState(false);
-	console.log(initialValues);
 	const {
 		control,
 		handleSubmit,
@@ -107,7 +105,6 @@ export default function NewTransactionModal({
 	});
 
 	const addTransaccion = (data) => {
-		console.log(data);
 		const newTransaction: Transaction = {
 			date: new Date(),
 			type: data.type,

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { NEWS_KEY } from '@env';
 const timer = 1000 * 60 * 5; // 5 minutes
-// import { nanoid } from 'nanoid';
 
 export function useFetchNews(loading, setLoading, setNewsArticles, page) {
   const today = new Date();
@@ -31,7 +30,6 @@ export function useFetchNews(loading, setLoading, setNewsArticles, page) {
             .slice(0, 10);
           setNewsArticles((prev) => [...prev, ...articles]);
           setLoading(false);
-          console.log(articles);
         })
         .catch((error) => console.error(error));
     }

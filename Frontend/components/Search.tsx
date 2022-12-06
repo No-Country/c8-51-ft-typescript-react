@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
-import { Button, Menu, Searchbar } from "react-native-paper";
+import { Menu, Searchbar } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppContext from "./AppContext";
 
@@ -15,7 +15,6 @@ export default function Search(props: SearchProps) {
 	const [visible, setVisible] = React.useState(false);
 	const openMenu = () => setVisible(true);
 	const closeMenu = () => setVisible(false);
-  console.log(user)
 	return (
 		<View
 			style={{
@@ -46,9 +45,7 @@ export default function Search(props: SearchProps) {
 					</TouchableOpacity>
 				}
 			>
-        <Text
-        style={{ padding: 10 }}
-        >Welcome {user.user[0].username}</Text>
+				<Text style={{ padding: 10 }}>Welcome {user.user[0].username}</Text>
 				<Menu.Item onPress={() => setUser(null)} title='Log out' />
 				{/* <Menu.Item onPress={() => {}} title='Item 2' /> */}
 			</Menu>

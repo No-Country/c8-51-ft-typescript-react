@@ -10,14 +10,9 @@ import React, { useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
 import { ICoin } from "../types";
 import {
-	Button,
 	FAB,
 	List,
-	Menu,
-	Modal,
 	Portal,
-	Surface,
-	TextInput,
 	useTheme,
 } from "react-native-paper";
 import NewTransactionModal from "../components/NewTrasanctionModal";
@@ -116,7 +111,6 @@ export default function PortfolioScreen() {
 	});
 	const { coins } = React.useContext(AppContext || null);
 	const [portfolio, setPortfolio] = useState(PortfolioJson);
-	console.log(coins);
 	let gananciaTotal = 0;
 	let portfolioTotal = 0;
 	let amount;
@@ -151,14 +145,8 @@ export default function PortfolioScreen() {
 				},
 				{ amount: 0, price: 0, date: new Date(), type: "buy" },
 			);
-			console.log(
-				totalUSDofSell,
-				totalUSDofBuy,
-				amount.amount * currentCoin.price,
-			);
 			gananciaTotal +=
 				amount.amount * currentCoin.price + totalUSDofSell - totalUSDofBuy;
-			console.log(gananciaTotal);
 			portfolioTotal += amount.amount * amount.price;
 			gananciaDelDia +=
 				(amount.amount * currentCoin.price * currentCoin.change24h) / 100;

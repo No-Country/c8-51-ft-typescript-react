@@ -27,9 +27,7 @@ export const namesForSymbols = {
   NANO: 'Nano',
   DOGE: 'Dogecoin',
 };
-// agrega 10 symbolos mas a este enlace 'https://api.binance.com/api/v3/ticker/24hr?symbols=[%22BTCUSDT%22,%22BNBUSDT%22,%22ETHUSDT%22,%22ADAUSDT%22,%22LTCUSDT%22]',
-// y luego usa el método fetch para obtener los datos de la API de Binance.
-//
+
 const symbols = [
   'BTCUSDT',
   'BNBUSDT',
@@ -53,7 +51,6 @@ const symbols = [
 const url = `https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(
   symbols,
 )}`;
-console.log(url);
 export function useFetchBinance(allCoins, setAllCoins) {
   const timer = 1000 * 60 * 5; // 5 minutes
   const fetchBinance = () => {
@@ -70,7 +67,6 @@ export function useFetchBinance(allCoins, setAllCoins) {
     )
       .then((res) => {
         res.json().then((data) => {
-          console.log(data);
           const coins: ICoin[] = data.map((item) => {
             const [symbol] = item.symbol.split('USDT');
             const name = namesForSymbols[symbol];
