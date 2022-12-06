@@ -23,10 +23,11 @@ class PortfolioController {
     if (user.portfolio_id) {
       const userPortfolio = await Portfolio.findById(user.portfolio_id).populate('coins');
       // if user have a portfolio coin
-      const userPortfolioCoin = userPortfolio.coins.filter(coin => coin.name === name && coin.symbol === symbol)
-      console.log(userPortfolioCoin.length > 0)
+      // console.log(userPortfolio)
+      // console.log(userPortfolioCoin.length > 0)
       await transaction.save();
-      if (userPortfolioCoin.length > 0) {
+      if ( userPortfolio?.coins !== undefined && userPortfolio.coins.length > 0) {
+        const userPortfolioCoin = userPortfolio.coins.filter(coin => coin.name === name && coin.symbol === symbol)
         console.log(userPortfolioCoin)
         userPortfolioCoin[0].transactions.push(transaction._id);
         console.log(userPortfolioCoin)
