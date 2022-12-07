@@ -7,6 +7,7 @@ interface AppContextProps {
   setCoins: (coins: ICoin[]) => void;
   user: User;
   setUser: (user: User) => void;
+  showFAB: boolean;
 }
 
 const AppContext = createContext({} as AppContextProps);

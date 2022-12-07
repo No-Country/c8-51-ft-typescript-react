@@ -10,6 +10,8 @@ import {
 	DefaultTheme,
 	useTheme,
 	ThemeBase,
+	MD3LightTheme,
+	MD2LightTheme,
 } from "react-native-paper";
 import { useState } from "react";
 import LoginScreen from "./screens/LoginScreen";
@@ -44,14 +46,18 @@ declare global {
 }
 
 const theme = {
-	...DefaultTheme,
+	...MD3LightTheme,
 	// Specify custom property
-	// myOwnProperty: true,
+	myOwnProperty: true,
 	// Specify custom property in nested object
 	colors: {
-		...DefaultTheme.colors,
-		dark: "#000022",
-		light: "#FDFDFD",
+		...MD3LightTheme.colors,
+		dark: "#251541",
+		// pastel: "#fbe3ff",
+		pastel: "#F0CAA3",
+		soft: "#f9f1fe",
+		light: "#ffe5bb",
+		accent: "#6fbebe",
 		text: "#000",
 		// primary: "#000000",
 		// secondary: "#ffffff",
@@ -62,36 +68,62 @@ export type Theme = typeof theme;
 
 export default function App() {
 	const [coins, setCoins] = useState<ICoin[]>([]);
+	const [showFAB, setShowFAB] = useState<boolean>(false);
 
-	const [user, setUser] = useState<User>(null);
-	// const [user, setUser] = useState<User>({
-	// 	token:
-	// 		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNjY2NjUsImV4cCI6MTY3MDM1MzA2NX0.uj1AbdAE9tnNC0TFpDbxu3e7KDU45TZKmB8w490MdWA",
-	// 	user: [
-	// 		{
-	// 			_id: "638ca579e4152971d5ab5b87",
-	// 			portfolio_id: "638df1ef9297239c3f9fb3ec",
-	// 			username: "test1",
-	// 		},
-	// 	],
-	// });
+	// const [user, setUser] = useState<User>(null);
+	const [user, setUser] = useState<User>({
+		token:
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNjY2NjUsImV4cCI6MTY3MDM1MzA2NX0.uj1AbdAE9tnNC0TFpDbxu3e7KDU45TZKmB8w490MdWA",
+		user: [
+			{
+				_id: "638ca579e4152971d5ab5b87",
+				portfolio_id: "638fa89522cbc0087a73f637",
+				username: "test1",
+			},
+		],
+	});
 	useFetchBinance(coins, setCoins);
 	return (
 		<PaperProvider theme={theme}>
-			<AppContext.Provider value={{ coins, setCoins, user, setUser }}>
+			<AppContext.Provider value={{ coins, setCoins, user, setUser, showFAB }}>
 				<NavigationContainer>
 					{user ? (
-						<Tab.Navigator>
+						<Tab.Navigator
+							screenListeners={{
+								tabPress: (e) => {
+									if (e.target.includes("Portfolio")) {
+										setShowFAB(true);
+									} else {
+										setShowFAB(false);
+									}
+								},
+							}}
+							screenOptions={{
+								tabBarStyle: {
+									backgroundColor: theme.colors.pastel,
+									borderTopColor: theme.colors.pastel,
+									height: 70,
+								},
+								tabBarIconStyle: {
+									marginTop: 10,
+									color: theme.colors.soft,
+								},
+
+								tabBarActiveTintColor: theme.colors.accent,
+								tabBarInactiveTintColor: theme.colors.dark,
+								tabBarShowLabel: false,
+							}}
+						>
 							<Tab.Screen
 								name="HomeScreen"
 								component={HomeScreen}
 								options={{
 									tabBarLabel: () => null,
 									headerShown: false,
-									tabBarIcon: ({ size }) => (
+									tabBarIcon: ({ size, color }) => (
 										<MaterialCommunityIcons
 											name="home"
-											color={theme.colors.primary}
+											color={color}
 											size={size}
 										/>
 									),
@@ -106,7 +138,7 @@ export default function App() {
 									tabBarIcon: ({ color, size }) => (
 										<MaterialCommunityIcons
 											name="chart-line"
-											color={theme.colors.primary}
+											color={color}
 											size={size}
 										/>
 									),
@@ -121,7 +153,7 @@ export default function App() {
 									tabBarIcon: ({ color, size }) => (
 										<MaterialCommunityIcons
 											name="currency-usd"
-											color={theme.colors.primary}
+											color={color}
 											size={size}
 										/>
 									),
@@ -136,7 +168,7 @@ export default function App() {
 									tabBarIcon: ({ color, size }) => (
 										<MaterialCommunityIcons
 											name="newspaper-variant-outline"
-											color={theme.colors.primary}
+											color={color}
 											size={size}
 										/>
 									),
