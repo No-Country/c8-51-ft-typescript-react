@@ -169,38 +169,44 @@ class PortfolioController {
   }
   async delete(req, res) {
     const { _id } = req.body;
+    const portfolioCoin = PortfolioCoin.findOne({
+      transactions: { $in: [_id] },
+    })
+      .populate("transactions")
+      .then((portfolioCoin) => {
+        console.log(portfolioCoin);
+        // if portfolio coin has no transactions, delete it
+        if (portfolioCoin.transactions.length === 0) {
+          PortfolioCoin.findByIdAndDelete(
+            portfolioCoin._id,
+            (err, portfolioCoin) => {
+              if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+              }
+              // res.status(200).json(portfolioCoin);
+            },
+          );
+        }
+        // if portfolio coin has transactions, delete transaction from it
+        else {
+          portfolioCoin.transactions = portfolioCoin.transactions.filter(
+            (transaction) => transaction._id !== _id,
+          );
+          portfolioCoin.save();
+          // res.status(200).json(portfolioCoin);
+        }
+      });
     Transaction.findByIdAndDelete(_id, (err, transaction) => {
       if (err) {
         console.error(err);
         return res.status(500).json(err);
       }
-      // if portfolio coin has no transactions, delete it
-      if (transaction) {
-        PortfolioCoin.findById(
-          transaction.portfolioCoin,
-          (err, portfolioCoin) => {
-            if (err) {
-              console.error(err);
-              return res.status(500).json(err);
-            }
-            if (portfolioCoin && portfolioCoin.transactions.length === 0) {
-              PortfolioCoin.findByIdAndDelete(
-                portfolioCoin._id,
-                (err, portfolioCoin) => {
-                  if (err) {
-                    console.error(err);
-                    return res.status(500).json(err);
-                  }
-                  res.status(200).json("item deleted");
-                },
-              );
-            }
-          },
-        );
-      }
-      res.status(200).json("item deleted");
+      res.status(200).json(transaction);
+      // find coin that have this transaction
     });
   }
+
 }
 
 module.exports = new PortfolioController();
