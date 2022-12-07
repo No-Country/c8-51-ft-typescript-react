@@ -47,7 +47,7 @@ const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
 		.number()
 		.required("Price is required")
 		.positive("Price must be positive"),
-	date: yup.date().required("Date is required"),
+	date: yup.string().required("Date is required"),
 });
 
 export default function NewTransactionModal({
