@@ -148,6 +148,7 @@ export default function PortfolioScreen() {
 										type: transaction.type,
 										amount: Number(transaction.amount),
 										price: Number(transaction.price),
+										_id: transaction._id,
 									};
 								}),
 							};
@@ -275,15 +276,16 @@ export default function PortfolioScreen() {
 		);
 	};
 
-	const [visible, setVisible] = useState(false);
-	const showModal = () => setVisible(true);
 	const CoinCard = () => {
+		const [visible, setVisible] = useState(false);
+		const showModal = () => setVisible(true);
 		const [initialModalValues, setInitialModalValues] = useState({
 			symbol: "",
 			amount: "",
 			price: "",
 			date: null,
 			type: null,
+			_id: null,
 		});
 		const hideModal = () => {
 			setVisible(false);
@@ -293,10 +295,27 @@ export default function PortfolioScreen() {
 				price: "",
 				date: null,
 				type: null,
+				_id: null,
 			});
 		};
 		return (
 			<>
+				<Portal
+					children={
+						<FAB
+							style={{
+								display: showFAB ? "flex" : "none",
+								position: "absolute",
+								right: 16,
+								bottom: 94,
+								zIndex: 100,
+								backgroundColor: theme.colors.accent,
+							}}
+							icon="plus"
+							onPress={showModal}
+						/>
+					}
+				/>
 				<NewTransactionModal
 					visible={visible}
 					setVisible={setVisible}
@@ -409,6 +428,15 @@ export default function PortfolioScreen() {
 												price: transaction.price.toFixed(2),
 												date: transaction.date,
 												type: transaction.type,
+												_id: transaction._id,
+											});
+											console.log("initialModalValues", {
+												symbol: coin.symbol,
+												amount: transaction.amount.toFixed(2),
+												price: transaction.price.toFixed(2),
+												date: transaction.date,
+												type: transaction.type,
+												_id: transaction._id,
 											});
 											showModal();
 										}}
@@ -454,22 +482,6 @@ export default function PortfolioScreen() {
 				backgroundColor: theme.colors.soft,
 			}}
 		>
-			<Portal
-				children={
-					<FAB
-						style={{
-							display: showFAB ? "flex" : "none",
-							position: "absolute",
-							right: 16,
-							bottom: 94,
-							zIndex: 100,
-							backgroundColor: theme.colors.accent,
-						}}
-						icon="plus"
-						onPress={showModal}
-					/>
-				}
-			/>
 			{loading && (
 				<Portal>
 					<View

@@ -12,6 +12,7 @@ import { ICoin } from "../types";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ActivityIndicator, Portal, useTheme } from "react-native-paper";
 import { Theme } from "../App";
+import { StatusBar } from "expo-status-bar";
 
 const binanceKlinesUrl = (symbol) => {
 	return `https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=1d&limit=30`;
@@ -32,7 +33,6 @@ type Kline = [
 ];
 
 const DetailScreen = (params) => {
-	console.log("coin", params.route.params);
 	const coin = params.route.params.coin as ICoin;
 	const [data, setData] = React.useState<Kline[]>([]);
 	const [isLoading, setIsLoading] = React.useState(true);
@@ -51,6 +51,7 @@ const DetailScreen = (params) => {
 	const Chart = () => {
 		return (
 			<>
+				<StatusBar style="inverted" />
 				{isLoading && (
 					<Portal>
 						<View
@@ -271,7 +272,9 @@ const DetailScreen = (params) => {
 	return (
 		<View>
 			{data.length > 0 && (
-				<SafeAreaView style={{...styles.container, backgroundColor: theme.colors.soft}}>
+				<SafeAreaView
+					style={{ ...styles.container, backgroundColor: theme.colors.soft }}
+				>
 					<Chart />
 					<InfoCard />
 				</SafeAreaView>

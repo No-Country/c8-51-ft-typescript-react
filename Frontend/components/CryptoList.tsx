@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Surface, Text, useTheme } from "react-native-paper";
 import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
@@ -6,6 +6,9 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { Theme } from "../App";
 import { ICoin } from "../types";
 import { NavigationContext } from "@react-navigation/native";
+import { Animated, Easing } from "react-native";
+
+const viewFadeIn = new Animated.Value(0);
 
 const styles = StyleSheet.create({
 	container: {
@@ -52,12 +55,21 @@ export default function CryptoList(props: IProps) {
 	const { isFavCallback } = props;
 	const theme = useTheme<Theme>();
 	function ListItem(coin: ICoin) {
+		useEffect(() => {
+			Animated.timing(viewFadeIn, {
+				useNativeDriver: false,
+				toValue: 1,
+				duration: 300,
+				easing: Easing.ease,
+			}).start();
+		}, [coin]);
 		return (
-			<Surface style={{...styles.itemContainer,backgroundColor: theme.colors.soft,}}>
+			<Surface
+				style={{ ...styles.itemContainer, backgroundColor: theme.colors.soft }}
+			>
 				<View
 					style={{
 						...styles.itemNameContainer,
-						
 					}}
 				>
 					<Text style={{ ...styles.itemNameSymbol, color: theme.colors.text }}>
@@ -67,12 +79,16 @@ export default function CryptoList(props: IProps) {
 						{coin.name}
 					</Text>
 				</View>
-				<View style={styles.itemPriceContainer}>
+				<Animated.View
+					style={{ ...styles.itemPriceContainer, opacity: viewFadeIn }}
+				>
 					<Text style={{ ...styles.itemPrice, color: theme.colors.text }}>
 						${coin.price}
 					</Text>
-				</View>
-				<View style={styles.tazationContainer}>
+				</Animated.View>
+				<Animated.View
+					style={{ ...styles.tazationContainer, opacity: viewFadeIn }}
+				>
 					<Text
 						style={{
 							...styles.tazation,
@@ -82,7 +98,7 @@ export default function CryptoList(props: IProps) {
 						{coin.change24h > 0 ? "+" : ""}
 						{coin.change24h}%
 					</Text>
-				</View>
+				</Animated.View>
 				<View>
 					<MaterialCommunityIcons
 						name={coin.isFav ? "star" : "star-outline"}

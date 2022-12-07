@@ -224,7 +224,7 @@ const StackNavigator = () => {
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
-				options={{ headerShown: true }}
+				options={{ headerShown: true}}
 				name="Detail"
 				component={DetailScreen}
 			/>

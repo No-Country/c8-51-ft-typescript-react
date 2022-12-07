@@ -14,6 +14,9 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavigationContext } from "@react-navigation/native";
 import { Theme } from "../App";
+import { Animated, Easing } from "react-native";
+
+const viewFadeIn = new Animated.Value(0);
 
 type FormData = {
 	username: string;
@@ -41,6 +44,15 @@ export default function RegisterScreen() {
 	const [serverError, setServerError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
+	useEffect(() => {
+		Animated.timing(viewFadeIn, {
+			useNativeDriver: false,
+			toValue: 1,
+			duration: 700,
+			easing: Easing.ease,
+		}).start();
+	}, []);
+
 	// use the useForm hook to initialize the form and handle form submissions
 	const {
 		control,
@@ -108,8 +120,12 @@ export default function RegisterScreen() {
 				</Portal>
 			)}
 
-			<View
-				style={{ ...styles.container, backgroundColor: theme.colors.soft }}
+			<Animated.View
+				style={{
+					...styles.container,
+					backgroundColor: theme.colors.soft,
+					opacity: viewFadeIn,
+				}}
 			>
 				<Controller
 					name="username"
@@ -195,7 +211,7 @@ export default function RegisterScreen() {
 				<HelperText type="error" visible={!!serverError}>
 					{serverError}
 				</HelperText>
-			</View>
+			</Animated.View>
 		</>
 	);
 }

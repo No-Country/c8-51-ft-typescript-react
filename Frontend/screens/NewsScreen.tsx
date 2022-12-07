@@ -19,6 +19,7 @@ import {
 	Appbar,
 	Searchbar,
 	ActivityIndicator,
+	Divider,
 } from "react-native-paper";
 import { Theme } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -80,7 +81,7 @@ function NewsCard({ news, isBookmarkedCallback }) {
 	// const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
 	return (
 		<View style={{ flex: 1, marginTop: 8 }}>
-			<Card mode="elevated" style={{ backgroundColor: theme.colors.light }}>
+			<Card mode="elevated" style={{ backgroundColor: theme.colors.soft }}>
 				<View>
 					<Card.Cover source={{ uri: news.image_url }} />
 				</View>
@@ -95,6 +96,7 @@ function NewsCard({ news, isBookmarkedCallback }) {
 					>
 						{news.tittle}
 					</Title>
+					<Divider />
 					<Paragraph
 						style={{
 							color: theme.colors.text,
@@ -161,7 +163,7 @@ export default function NewsSceeen() {
 
 	return (
 		<>
-			<SafeAreaView style={{ backgroundColor: theme.colors.light, flex: 1 }}>
+			<SafeAreaView style={{ backgroundColor: theme.colors.soft, flex: 1 }}>
 				<View
 					style={{
 						flexDirection: "row",
@@ -178,9 +180,10 @@ export default function NewsSceeen() {
 						onPress={onToggleFav}
 					/> */}
 				</View>
+				<Divider style={{ height: 2, backgroundColor: theme.colors.pastel }} />
 				<FlatList
 					style={{
-						backgroundColor: theme.colors.background,
+						backgroundColor: theme.colors.soft,
 						minHeight: 1000,
 					}}
 					data={newsArticles}
@@ -189,6 +192,9 @@ export default function NewsSceeen() {
 							<NewsCard
 								news={item}
 								isBookmarkedCallback={isBookmarkedCallback}
+							/>
+							<Divider
+								style={{ height: 2, backgroundColor: theme.colors.pastel }}
 							/>
 						</TouchableOpacity>
 					)}

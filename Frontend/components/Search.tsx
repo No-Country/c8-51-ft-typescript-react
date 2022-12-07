@@ -11,7 +11,7 @@ interface SearchProps {
 }
 
 export default function Search(props: SearchProps) {
-  const theme = useTheme<Theme>();
+	const theme = useTheme<Theme>();
 	const { setUser, user } = useContext(AppContext);
 	const { value, onChangeText } = props;
 	const [visible, setVisible] = React.useState(false);
@@ -24,7 +24,7 @@ export default function Search(props: SearchProps) {
 				flexDirection: "row",
 				// justifyContent: "center",
 				alignItems: "center",
-        backgroundColor: theme.colors.soft,
+				backgroundColor: theme.colors.soft,
 			}}
 		>
 			<View style={{ flex: 1 }}>
@@ -32,13 +32,13 @@ export default function Search(props: SearchProps) {
 					placeholder='Search'
 					onChangeText={onChangeText}
 					value={value}
-					style={{...styles.search, backgroundColor: theme.colors.soft}}
+					style={{ ...styles.search, backgroundColor: theme.colors.soft }}
 				/>
 			</View>
 			<Menu
 				visible={visible}
 				onDismiss={closeMenu}
-				// style={{ flex: 0, marginRight: 10 }}
+				// style={{ backgroundColor: theme.colors.soft}}
 				anchor={
 					<TouchableOpacity
 						style={{ flex: 0, marginRight: 10 }}
@@ -48,7 +48,12 @@ export default function Search(props: SearchProps) {
 					</TouchableOpacity>
 				}
 			>
-				<Text style={{ padding: 10 }}>Welcome {user.user[0].username}</Text>
+				<Menu.Item
+					onPress={() => {}}
+					title="Settings"
+					trailingIcon='cog'
+					// style={{ backgroundColor: theme.colors.soft }}
+				/>
 				<Menu.Item onPress={() => setUser(null)} title='Log out' />
 				{/* <Menu.Item onPress={() => {}} title='Item 2' /> */}
 			</Menu>

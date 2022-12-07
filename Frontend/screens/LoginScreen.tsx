@@ -16,11 +16,13 @@ import AppContext from "../components/AppContext";
 import { StatusBar } from "expo-status-bar";
 import { ThemeProvider } from "@react-navigation/native";
 import { Theme } from "../App";
+import { Animated, Easing } from "react-native";
 
 type FormData = {
 	username: string;
 	password: string;
 };
+const viewFadeIn = new Animated.Value(0);
 
 const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
 	username: yup
@@ -38,6 +40,16 @@ const LoginPage = () => {
 	const [serverError, setServerError] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		Animated.timing(viewFadeIn, {
+			useNativeDriver: false,
+			toValue: 1,
+			duration: 700,
+			easing: Easing.ease,
+		}).start();
+	}, []);
+
 	// use the useForm hook to initialize the form and handle form submissions
 	const {
 		control,
@@ -103,10 +115,12 @@ const LoginPage = () => {
 					</View>
 				</Portal>
 			)}
-			<View
+
+			<Animated.View
 				style={{
 					...styles.container,
 					backgroundColor: theme.colors.soft,
+					opacity: viewFadeIn,
 				}}
 			>
 				<Controller
@@ -171,7 +185,7 @@ const LoginPage = () => {
 				>
 					Login
 				</Button>
-			</View>
+			</Animated.View>
 		</>
 	);
 };
