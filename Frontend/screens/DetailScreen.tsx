@@ -87,11 +87,10 @@ const DetailScreen = (params) => {
 								}
 								count++;
 								return "";
-							})
-							.reverse(),
+							}),
 						datasets: [
 							{
-								data: data.map((item) => parseFloat(item[4]) || 0).reverse(),
+								data: data.map((item) => parseFloat(item[4]) || 0),
 							},
 						],
 					}}
