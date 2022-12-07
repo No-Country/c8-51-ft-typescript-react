@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useContext, useEffect, useState } from "react";
 import { ICoin } from "../types";
 import Search from "../components/Search";
@@ -160,13 +161,30 @@ export default function CurrencyConverterScreen() {
 					setSelectedCoin={setSecondSelectedCoin}
 					data={data}
 				/>
-				<TextInput
-					mode="outlined"
-					value={currencyValue}
-					onChangeText={(amount) => setCurrencyValue(amount)}
-					label="USD"
-					style={{ height: 40, margin: 10 }}
-				/>
+				<View
+					style={{
+						height: 50,
+						margin: 10,
+						backgroundColor: theme.colors.dark,
+						display: "flex",
+						justifyContent: "center",
+						shadowColor: "#000000",
+						shadowOffset: { width: 0, height: 2 },
+						shadowOpacity: 0.5,
+						shadowRadius: 2,
+					}}
+				>
+					<Text
+						style={{
+							margin: 10,
+							fontSize: 20,
+							// backgroundColor: theme.colors.dark,
+							color: theme.colors.light,
+						}}
+					>
+						${currencyValue} USDT
+					</Text>
+				</View>
 			</View>
 		</SafeAreaView>
 	);

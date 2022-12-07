@@ -78,12 +78,36 @@ const styles = StyleSheet.create({
 
 function NewsCard({ news, isBookmarkedCallback }) {
 	const theme = useTheme<Theme>();
+	const [loading, setLoading] = React.useState(true);
 	// const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
 	return (
 		<View style={{ flex: 1, marginTop: 8 }}>
-			<Card mode="elevated" style={{ backgroundColor: theme.colors.soft }}>
-				<View>
-					<Card.Cover source={{ uri: news.image_url }} />
+			<Card
+				mode="elevated"
+				style={{ backgroundColor: theme.colors.soft, position: "relative" }}
+			>
+				<View style={{ position: "relative" }}>
+					{loading && (
+						<ActivityIndicator
+							style={{
+								position: "absolute",
+								zIndex: 100,
+								top: -30,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								// alignItems: "center",
+								// justifyContent: "center",
+							}}
+							size="large"
+							color={theme.colors.dark}
+						/>
+					)}
+					<Card.Cover
+						onLoadStart={() => setLoading(true)}
+						onLoadEnd={() => setLoading(false)}
+						source={{ uri: news.image_url }}
+					/>
 				</View>
 				<Card.Content style={{ padding: 0 }}>
 					<Title
@@ -188,13 +212,18 @@ export default function NewsSceeen() {
 					}}
 					data={newsArticles}
 					renderItem={({ item }) => (
-						<TouchableOpacity onPress={() => Linking.openURL(item.url)}>
+						<TouchableOpacity
+							style={{
+								shadowColor: "#000000",
+								shadowOffset: { width: 0, height: 2 },
+								shadowOpacity: 0.5,
+								shadowRadius: 2,
+							}}
+							onPress={() => Linking.openURL(item.url)}
+						>
 							<NewsCard
 								news={item}
 								isBookmarkedCallback={isBookmarkedCallback}
-							/>
-							<Divider
-								style={{ height: 2, backgroundColor: theme.colors.pastel }}
 							/>
 						</TouchableOpacity>
 					)}

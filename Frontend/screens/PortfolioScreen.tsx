@@ -1,11 +1,11 @@
 import {
-	SafeAreaView,
 	ScrollView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
 import { ICoin } from "../types";
@@ -138,11 +138,11 @@ export default function PortfolioScreen() {
 					console.log(data.coins[0].transactions);
 					setLoading(false);
 					setPortfolio(
-						data.coins.map((coin: any) => {
+						data.coins.map((coin) => {
 							return {
 								name: coin.name,
 								symbol: coin.symbol,
-								transactions: coin.transactions.map((transaction: any) => {
+								transactions: coin.transactions.map((transaction) => {
 									return {
 										date: new Date(transaction.date),
 										type: transaction.type,
@@ -407,7 +407,7 @@ export default function PortfolioScreen() {
 							>
 								{coin.transactions.map((transaction, index) => (
 									<TouchableOpacity
-										key={index}
+										key={transaction._id}
 										style={{
 											display: "flex",
 											flexDirection: "row",

@@ -9,7 +9,7 @@ import {
 	IconButton,
 	useTheme,
 } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {SafeAreaView}from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Theme } from "../App";
 import { ICoin } from "../types";

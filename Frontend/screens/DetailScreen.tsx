@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React from "react";
 import { LineChart } from "react-native-chart-kit";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {SafeAreaView}from 'react-native-safe-area-context';
 import { ICoin } from "../types";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ActivityIndicator, Portal, useTheme } from "react-native-paper";
@@ -270,16 +270,16 @@ const DetailScreen = (params) => {
 	};
 	const theme = useTheme<Theme>();
 	return (
-		<View>
+		<SafeAreaView
+			style={{ ...styles.container, backgroundColor: theme.colors.soft }}
+		>
 			{data.length > 0 && (
-				<SafeAreaView
-					style={{ ...styles.container, backgroundColor: theme.colors.soft }}
-				>
+				<>
 					<Chart />
 					<InfoCard />
-				</SafeAreaView>
+				</>
 			)}
-		</View>
+		</SafeAreaView>
 	);
 };
 
