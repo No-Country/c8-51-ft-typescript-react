@@ -14,34 +14,6 @@ import {
 import { Theme } from "../App";
 import AppContext from "../components/AppContext";
 
-// pagina para comparar el valor de las criptomonedas
-// const cryptoJson: ICoin[] = [
-// 	{
-// 		name: "Bitcoin",
-// 		symbol: "BTC",
-// 		price: 15100.12,
-// 		change24h: 10.5,
-// 		isFav: true,
-// 	},
-// 	{
-// 		name: "Ethereum",
-// 		symbol: "ETH",
-// 		price: 400.51,
-// 		change24h: -2.5,
-// 		isFav: false,
-// 	},
-// 	{
-// 		name: "Litecoin",
-// 		symbol: "LTC",
-// 		price: 100,
-// 		change24h: 0.5,
-// 		isFav: false,
-// 	},
-// ];
-// const data = cryptoJson.map((item) => {
-// 	return { name: item.name, symbol: item.symbol };
-// });
-
 type currencyItem = {
 	name: string;
 	symbol: string;
@@ -67,23 +39,15 @@ const ExchangeInput = ({
 	const closeMenu = () => setVisible(false);
 
 	return (
-		<View style={{ flexDirection: "row" }}>
+		<View style={{ flexDirection: "row", backgroundColor: theme.colors.soft }}>
 			<TextInput
 				mode="outlined"
 				value={value}
 				onChangeText={(value) => OnChangeInput(value)}
 				label={selectedCoin ? `${selectedCoin.symbol} Amount` : "Amount"}
-				style={{ flex: 1, height: 40, margin: 10 }}
+				style={{ ...styles.textInput }}
 			/>
-			<View
-				style={{
-					flex: 1,
-					height: 40,
-					margin: 10,
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
+			<View style={{ ...styles.menuContainer }}>
 				<Menu
 					visible={visible}
 					onDismiss={closeMenu}
@@ -179,7 +143,7 @@ export default function CurrencyConverterScreen() {
 		}
 	};
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.light }}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.soft }}>
 			<Search value={searchQuery} onChangeText={setSearchQuery} />
 			<View style={{ flex: 1 }}>
 				<ExchangeInput
@@ -208,4 +172,20 @@ export default function CurrencyConverterScreen() {
 	);
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+	container: {
+		flexDirection: "row",
+	},
+	textInput: {
+		flex: 1,
+		height: 40,
+		margin: 10,
+	},
+	menuContainer: {
+		flex: 1,
+		height: 40,
+		margin: 10,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+});

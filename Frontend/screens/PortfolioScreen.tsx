@@ -17,6 +17,7 @@ import {
 	useTheme,
 } from "react-native-paper";
 import NewTransactionModal from "../components/NewTrasanctionModal";
+import { Theme } from "../App";
 export interface Transaction {
 	date: Date;
 	type: "buy" | "sell";
@@ -75,7 +76,7 @@ const PortfolioJson: Portfolio = [
 ];
 
 export default function PortfolioScreen() {
-	const theme = useTheme();
+	const theme = useTheme<Theme>();
 	const styles = StyleSheet.create({
 		container: {
 			// flex: 1,
@@ -110,7 +111,7 @@ export default function PortfolioScreen() {
 			margin: 10,
 		},
 	});
-	const { coins, user } = React.useContext(AppContext || null);
+	const { coins, user, showFAB } = React.useContext(AppContext || null);
 	const [portfolio, setPortfolio] = useState([]);
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
@@ -154,6 +155,7 @@ export default function PortfolioScreen() {
 					);
 				})
 				.catch((err) => {
+					setLoading(false);
 					console.log(err);
 				});
 		}
@@ -211,7 +213,7 @@ export default function PortfolioScreen() {
 						justifyContent: "space-between",
 						alignItems: "center",
 						height: 100,
-						backgroundColor: "#012136",
+						backgroundColor: "#04111d",
 						padding: 10,
 						borderRadius: 10,
 					}}
@@ -238,7 +240,7 @@ export default function PortfolioScreen() {
 							style={{
 								flexDirection: "column",
 								justifyContent: "flex-end",
-								backgroundColor: "#012136",
+								backgroundColor: "#04111d",
 								flex: 1,
 							}}
 						>
@@ -253,7 +255,7 @@ export default function PortfolioScreen() {
 							style={{
 								flexDirection: "column",
 								justifyContent: "flex-end",
-								backgroundColor: "#012136",
+								backgroundColor: "#04111d",
 								padding: 10,
 								borderRadius: 10,
 							}}
@@ -273,9 +275,9 @@ export default function PortfolioScreen() {
 		);
 	};
 
+	const [visible, setVisible] = useState(false);
+	const showModal = () => setVisible(true);
 	const CoinCard = () => {
-		const [visible, setVisible] = useState(false);
-		const showModal = () => setVisible(true);
 		const [initialModalValues, setInitialModalValues] = useState({
 			symbol: "",
 			amount: "",
@@ -311,7 +313,7 @@ export default function PortfolioScreen() {
 						display: "flex",
 						flexDirection: "column",
 						height: "auto",
-						backgroundColor: "#c9dfee",
+						backgroundColor: theme.colors.soft,
 						borderRadius: 0,
 						zIndex: 1,
 						marginTop: 10,
@@ -333,7 +335,7 @@ export default function PortfolioScreen() {
 								title={coin.symbol}
 								titleStyle={{ color: "#fff" }}
 								style={{
-									backgroundColor: "#04111d",
+									backgroundColor: theme.colors.dark,
 									display: "flex",
 									flexDirection: "row",
 									justifyContent: "space-between",
@@ -394,7 +396,7 @@ export default function PortfolioScreen() {
 											alignItems: "center",
 											height: 50,
 											padding: 0,
-											backgroundColor: "#04111d",
+											backgroundColor: theme.colors.pastel,
 											borderBottomColor: "#ffffff",
 											borderBottomWidth: 1,
 											width: "100%",
@@ -412,22 +414,22 @@ export default function PortfolioScreen() {
 										}}
 									>
 										<View>
-											<Text style={{ fontSize: 16, color: "#FFF" }}>
+											<Text style={{ fontSize: 16, color: theme.colors.dark }}>
 												{transaction.type.toLocaleUpperCase()}
 											</Text>
 										</View>
-										<Text style={{ fontSize: 12, color: "#f0d59b" }}>
+										<Text style={{ fontSize: 12, color: theme.colors.dark }}>
 											<Text style={{ fontSize: 12 }}>cant:</Text>
 											{transaction.amount}
 										</Text>
 										<View>
-											<Text style={{ fontSize: 16, color: "#fff" }}>
+											<Text style={{ fontSize: 16, color: theme.colors.dark }}>
 												${transaction.price}
 											</Text>
 											<Text
 												style={{
 													fontSize: 12,
-													color: "#f0d59b",
+													color: theme.colors.dark,
 													alignSelf: "flex-end",
 												}}
 											>
@@ -440,24 +442,34 @@ export default function PortfolioScreen() {
 						);
 					})}
 				</ScrollView>
-				<Portal>
-					<FAB
-						style={{
-							position: "absolute",
-							right: 16,
-							bottom: 94,
-							zIndex: 100,
-						}}
-						icon="plus"
-						onPress={showModal}
-					/>
-				</Portal>
 			</>
 		);
 	};
 
 	return (
-		<SafeAreaView style={{ display: "flex" }}>
+		<SafeAreaView
+			style={{
+				display: "flex",
+				height: "100%",
+				backgroundColor: theme.colors.soft,
+			}}
+		>
+			<Portal
+				children={
+					<FAB
+						style={{
+							display: showFAB ? "flex" : "none",
+							position: "absolute",
+							right: 16,
+							bottom: 94,
+							zIndex: 100,
+							backgroundColor: theme.colors.accent,
+						}}
+						icon="plus"
+						onPress={showModal}
+					/>
+				}
+			/>
 			{loading && (
 				<Portal>
 					<View

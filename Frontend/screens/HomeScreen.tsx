@@ -156,11 +156,30 @@ function Home() {
 	return (
 		<>
 			<SafeAreaView
-				style={{ ...styles.container, backgroundColor: theme.colors.light }}
+				style={{
+					...styles.container,
+					backgroundColor: theme.colors.soft,
+				}}
 			>
 				<Search onChangeText={onChangeSearch} value={searchQuery} />
 				<View style={styles.containerContainer}>
-					<Tab.Navigator>
+					<Tab.Navigator
+            initialRouteName='All'
+						screenOptions={{
+							tabBarActiveTintColor: theme.colors.accent,
+							tabBarInactiveTintColor: theme.colors.light,
+							tabBarStyle: {
+								backgroundColor: theme.colors.dark,
+								borderTopWidth: 2,
+								borderTopColor: theme.colors.light,
+							},
+							tabBarIndicatorStyle: {
+								backgroundColor: theme.colors.accent,
+								width: 50,
+								marginLeft: 70,
+							},
+						}}
+					>
 						<Tab.Screen name='All'>
 							{() => (
 								<CryptoList
@@ -186,13 +205,24 @@ function Home() {
 	);
 }
 const StackNavigator = () => {
+	const theme = useTheme<Theme>();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerShown: false,
+				headerStyle: {
+					backgroundColor: theme.colors.dark,
+				},
+				headerTintColor: theme.colors.light,
+				headerTitleStyle: {
+					fontWeight: "bold",
+				},
 			}}
 		>
-			<Stack.Screen name="Home" component={Home} />
+			<Stack.Screen
+				name="Home"
+				component={Home}
+				options={{ headerShown: false }}
+			/>
 			<Stack.Screen
 				options={{ headerShown: true }}
 				name="Detail"

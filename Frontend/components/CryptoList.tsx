@@ -53,8 +53,13 @@ export default function CryptoList(props: IProps) {
 	const theme = useTheme<Theme>();
 	function ListItem(coin: ICoin) {
 		return (
-			<Surface style={styles.itemContainer}>
-				<View style={styles.itemNameContainer}>
+			<Surface style={{...styles.itemContainer,backgroundColor: theme.colors.soft,}}>
+				<View
+					style={{
+						...styles.itemNameContainer,
+						
+					}}
+				>
 					<Text style={{ ...styles.itemNameSymbol, color: theme.colors.text }}>
 						{coin.symbol}{" "}
 					</Text>
@@ -96,12 +101,12 @@ export default function CryptoList(props: IProps) {
 			style={{ ...styles.container, backgroundColor: theme.colors.background }}
 		>
 			<Surface
-				style={{ ...styles.surface, backgroundColor: theme.colors.background }}
+				style={{ ...styles.surface, backgroundColor: theme.colors.dark }}
 			>
-				<Text style={{ color: theme.colors.text, flex: 2 }}>Name</Text>
-				<Text style={{ color: theme.colors.text, flex: 2 }}>Price</Text>
-				<Text style={{ color: theme.colors.text, flex: 1 }}>24h</Text>
-				<Text style={{ color: theme.colors.text, flex: 0 }}>Favs</Text>
+				<Text style={{ color: theme.colors.light, flex: 2 }}>Name</Text>
+				<Text style={{ color: theme.colors.light, flex: 2 }}>Price</Text>
+				<Text style={{ color: theme.colors.light, flex: 1 }}>24h</Text>
+				<Text style={{ color: theme.colors.light, flex: 0 }}>Favs</Text>
 			</Surface>
 			<ScrollView style={styles.containerContainer}>
 				{items.map((coin) => (

@@ -7,11 +7,15 @@ import {
 	withTheme,
 	Portal,
 	ActivityIndicator,
+	useTheme,
 } from "react-native-paper";
 import { useForm, Controller, set } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import AppContext from "../components/AppContext";
+import { StatusBar } from "expo-status-bar";
+import { ThemeProvider } from "@react-navigation/native";
+import { Theme } from "../App";
 
 type FormData = {
 	username: string;
@@ -29,6 +33,7 @@ const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
 		.min(4, "Password must be at least 4 characters"),
 });
 const LoginPage = () => {
+	const theme = useTheme<Theme>();
 	const { user, setUser } = useContext(AppContext);
 	const [serverError, setServerError] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
@@ -56,13 +61,13 @@ const LoginPage = () => {
 			},
 		)
 			.then((res) => res.json())
-    .then((data) => {
+			.then((data) => {
 				setLoading(false);
 				if (data.message) {
 					setServerError(data.message);
 				} else {
 					setUser(data);
-          console.log(data)
+					console.log(data);
 				}
 			})
 			.catch((err) => {
@@ -98,7 +103,12 @@ const LoginPage = () => {
 					</View>
 				</Portal>
 			)}
-			<View style={styles.container}>
+			<View
+				style={{
+					...styles.container,
+					backgroundColor: theme.colors.soft,
+				}}
+			>
 				<Controller
 					name="username"
 					control={control}
@@ -108,7 +118,8 @@ const LoginPage = () => {
 							label="Username"
 							mode="outlined"
 							error={errors.username ? true : false}
-							style={styles.input}
+							style={{ ...styles.input }}
+							outlineColor={theme.colors.dark}
 							onBlur={onBlur}
 							value={value}
 							onChangeText={onChange}
@@ -127,6 +138,7 @@ const LoginPage = () => {
 						<TextInput
 							label="Password"
 							mode="outlined"
+							outlineColor={theme.colors.dark}
 							right={
 								<TextInput.Icon
 									icon={showPassword ? "eye" : "eye-off"}
@@ -150,7 +162,10 @@ const LoginPage = () => {
 					{serverError}
 				</HelperText>
 				<Button
-					mode="contained"
+					mode='contained'
+					buttonColor={theme.colors.accent}
+					textColor={theme.colors.dark}
+					elevation={5}
 					style={styles.button}
 					onPress={handleSubmit(onSubmit)}
 				>
@@ -172,8 +187,10 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	button: {
-		// width: "80%",
-		marginTop: 20,
+		width: 310,
+		padding: 5,
+		borderRadius: 5,
+		fontSize: 18,
 	},
 });
 

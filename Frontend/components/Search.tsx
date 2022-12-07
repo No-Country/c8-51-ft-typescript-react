@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
-import { Menu, Searchbar } from "react-native-paper";
+import { Menu, Searchbar, ThemeProvider, useTheme } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppContext from "./AppContext";
+import { Theme } from "../App";
 
 interface SearchProps {
 	value: string;
@@ -10,6 +11,7 @@ interface SearchProps {
 }
 
 export default function Search(props: SearchProps) {
+  const theme = useTheme<Theme>();
 	const { setUser, user } = useContext(AppContext);
 	const { value, onChangeText } = props;
 	const [visible, setVisible] = React.useState(false);
@@ -22,6 +24,7 @@ export default function Search(props: SearchProps) {
 				flexDirection: "row",
 				// justifyContent: "center",
 				alignItems: "center",
+        backgroundColor: theme.colors.soft,
 			}}
 		>
 			<View style={{ flex: 1 }}>
@@ -29,7 +32,7 @@ export default function Search(props: SearchProps) {
 					placeholder='Search'
 					onChangeText={onChangeText}
 					value={value}
-					style={styles.search}
+					style={{...styles.search, backgroundColor: theme.colors.soft}}
 				/>
 			</View>
 			<Menu

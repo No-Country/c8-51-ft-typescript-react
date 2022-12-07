@@ -1,26 +1,17 @@
 import {
 	Dimensions,
-	ScrollView,
 	StyleSheet,
 	Text,
-	Touchable,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import React from "react";
-import {
-	LineChart,
-	BarChart,
-	PieChart,
-	ProgressChart,
-	ContributionGraph,
-	StackedBarChart,
-} from "react-native-chart-kit";
+import { LineChart } from "react-native-chart-kit";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigationContext } from "@react-navigation/native";
 import { ICoin } from "../types";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { ActivityIndicator, Portal } from "react-native-paper";
+import { ActivityIndicator, Portal, useTheme } from "react-native-paper";
+import { Theme } from "../App";
 
 const binanceKlinesUrl = (symbol) => {
 	return `https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=1d&limit=30`;
@@ -41,12 +32,10 @@ type Kline = [
 ];
 
 const DetailScreen = (params) => {
-	// const navigation = React.useContext(NavigationContext);
 	console.log("coin", params.route.params);
 	const coin = params.route.params.coin as ICoin;
 	const [data, setData] = React.useState<Kline[]>([]);
 	const [isLoading, setIsLoading] = React.useState(true);
-	// navigation.setOptions({ title: `${coin.symbol} Details` });
 	React.useEffect(() => {
 		if (isLoading && coin.symbol) {
 			fetch(binanceKlinesUrl(coin.symbol))
@@ -278,10 +267,11 @@ const DetailScreen = (params) => {
 			</View>
 		);
 	};
+	const theme = useTheme<Theme>();
 	return (
 		<View>
 			{data.length > 0 && (
-				<SafeAreaView style={styles.container}>
+				<SafeAreaView style={{...styles.container, backgroundColor: theme.colors.soft}}>
 					<Chart />
 					<InfoCard />
 				</SafeAreaView>
@@ -297,7 +287,7 @@ const styles = StyleSheet.create({
 		display: "flex",
 		height: "100%",
 		flexDirection: "column",
-		backgroundColor: "#fff",
+		// backgroundColor: "#fff",
 		alignItems: "center",
 		justifyContent: "flex-start",
 	},

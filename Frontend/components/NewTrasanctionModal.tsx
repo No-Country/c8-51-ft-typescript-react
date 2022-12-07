@@ -173,7 +173,7 @@ export default function NewTransactionModal({
 						alignItems: "center",
 					}}
 				>
-					<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+					<Text style={{ fontSize: 20, fontWeight: "bold", margin: 20 }}>
 						Agregar Transacción
 					</Text>
 					<Menu

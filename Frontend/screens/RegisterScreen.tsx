@@ -7,11 +7,13 @@ import {
 	withTheme,
 	ActivityIndicator,
 	Portal,
+	useTheme,
 } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavigationContext } from "@react-navigation/native";
+import { Theme } from "../App";
 
 type FormData = {
 	username: string;
@@ -35,6 +37,7 @@ const validationSchema: yup.ObjectSchema<{}> = yup.object().shape({
 });
 
 export default function RegisterScreen() {
+	const theme = useTheme<Theme>();
 	const [serverError, setServerError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +70,7 @@ export default function RegisterScreen() {
 				if (data.message) {
 					setServerError(data.message);
 				} else {
-          navigation.navigate("Login");
+					navigation.navigate("Login");
 				}
 			})
 			.catch((err) => {
@@ -105,7 +108,9 @@ export default function RegisterScreen() {
 				</Portal>
 			)}
 
-			<View style={styles.container}>
+			<View
+				style={{ ...styles.container, backgroundColor: theme.colors.soft }}
+			>
 				<Controller
 					name="username"
 					control={control}
@@ -114,6 +119,7 @@ export default function RegisterScreen() {
 						<TextInput
 							label="Username"
 							autoCapitalize="none"
+							outlineColor={theme.colors.dark}
 							onBlur={onBlur}
 							onChangeText={(value) => onChange(value)}
 							mode="outlined"
@@ -138,6 +144,7 @@ export default function RegisterScreen() {
 							}
 							secureTextEntry={!showPassword}
 							autoCapitalize="none"
+							outlineColor={theme.colors.dark}
 							label="Password"
 							onBlur={onBlur}
 							mode="outlined"
@@ -164,6 +171,7 @@ export default function RegisterScreen() {
 							secureTextEntry={!showPassword}
 							label="Confirm Password"
 							autoCapitalize="none"
+							outlineColor={theme.colors.dark}
 							onBlur={onBlur}
 							onChangeText={(value) => onChange(value)}
 							mode="outlined"
@@ -174,7 +182,14 @@ export default function RegisterScreen() {
 				<HelperText type="error" visible={!!errors.confirmPassword}>
 					{errors.confirmPassword?.message}
 				</HelperText>
-				<Button mode="contained" onPress={handleSubmit(onSubmit)}>
+				<Button
+					mode="contained"
+					onPress={handleSubmit(onSubmit)}
+					buttonColor={theme.colors.accent}
+					textColor={theme.colors.dark}
+					elevation={5}
+					style={styles.button}
+				>
 					Register
 				</Button>
 				<HelperText type="error" visible={!!serverError}>
@@ -190,5 +205,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		padding: 20,
+	},
+	button: {
+		// width: 200,
+		// margin: 10,
+		padding: 5,
+		borderRadius: 5,
+		fontSize: 18,
 	},
 });

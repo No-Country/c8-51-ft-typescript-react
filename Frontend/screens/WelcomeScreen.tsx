@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Button, Menu, Searchbar } from "react-native-paper";
+import { Button, Menu, Searchbar, useTheme } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppContext from "../components/AppContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./LoginScreen";
 import RegisterScreen from "./RegisterScreen";
-import { NavigationContext, useNavigation } from "@react-navigation/native";
+import {
+	NavigationContext,
+	ThemeProvider,
+	useNavigation,
+} from "@react-navigation/native";
+import { Header } from "react-native/Libraries/NewAppScreen";
+import { StatusBar } from "expo-status-bar";
+import { Theme } from "../App";
+import { Animated, Easing } from "react-native";
 
+const viewPosition = new Animated.Value(0);
 // a welcome screen for a react native app, with a login and register button, using react-native-paper, typescript
 
 function WelcomeScreen() {
@@ -16,49 +25,85 @@ function WelcomeScreen() {
 	const [visible, setVisible] = React.useState(false);
 	const openMenu = () => setVisible(true);
 	const closeMenu = () => setVisible(false);
+	const theme = useTheme<Theme>();
+	useEffect(() => {
+		Animated.timing(viewPosition, {
+			useNativeDriver: false,
+			toValue: 1,
+			duration: 1000,
+			easing: Easing.bounce,
+		}).start();
+	}, []);
+
 	return (
-		<View style={styles.container}>
-			<View style={styles.header}>
-				<Text style={styles.title}>Welcome to the app!</Text>
-				<Text style={styles.subtitle}>Please log in or register</Text>
-			</View>
-			<View style={styles.body}>
-				<Button
-					mode='contained'
-					style={styles.button}
-					onPress={() => navigation.navigate("Login")}
+		<>
+			<StatusBar style="inverted" />
+			<View
+				style={{
+					...styles.container,
+					backgroundColor: theme.colors.dark,
+				}}
+			>
+				<Animated.View
+					style={{
+						...styles.header,
+						top: viewPosition.interpolate({
+							inputRange: [0, 1],
+							outputRange: [-400, 0],
+						}),
+					}}
 				>
-					Log in
-				</Button>
-				<Button
-					mode='contained'
-					style={styles.button}
-					onPress={() => navigation.navigate("Register")}
+					<View
+						style={{
+							...styles.headerContent,
+							backgroundColor: theme.colors.dark,
+						}}
+					>
+						<Text style={{ ...styles.title, color: theme.colors.pastel }}>
+							CryptoHub
+						</Text>
+						<Text style={{ ...styles.subtitle, color: theme.colors.soft }}>
+							The best place to manage your crypto
+						</Text>
+					</View>
+				</Animated.View>
+				<Animated.View
+					style={{
+						...styles.body,
+						backgroundColor: theme.colors.soft,
+						bottom: viewPosition.interpolate({
+							inputRange: [0, 1],
+							outputRange: [-400, 0],
+						}),
+					}}
 				>
-					Register
-				</Button>
+					<Button
+						mode='contained'
+						buttonColor={theme.colors.dark}
+						style={styles.button}
+						onPress={() => navigation.navigate("Login")}
+					>
+						Log in
+					</Button>
+					<Button
+						mode='contained'
+						buttonColor={theme.colors.accent}
+						textColor={theme.colors.dark}
+						style={styles.button}
+						onPress={() => navigation.navigate("Register")}
+					>
+						Register
+					</Button>
+				</Animated.View>
 			</View>
-			<View style={styles.footer}>
-				<Menu
-					visible={visible}
-					onDismiss={closeMenu}
-					anchor={
-						<TouchableOpacity style={styles.menu} onPress={openMenu}>
-							<MaterialCommunityIcons name='menu' size={22} />
-						</TouchableOpacity>
-					}
-				>
-					<Menu.Item onPress={() => setUser(null)} title='Log out' />
-				</Menu>
-			</View>
-		</View>
+		</>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: "#3c2525",
 		alignItems: "center",
 		justifyContent: "center",
 	},
@@ -66,43 +111,73 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
+
+		width: "100%",
+	},
+	headerContent: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		position: "absolute",
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
 	},
 	title: {
-		fontSize: 30,
+		fontSize: 45,
 		fontWeight: "bold",
+		letterSpacing: 9,
 	},
 	subtitle: {
-		fontSize: 20,
+		fontSize: 16,
 	},
 	body: {
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
+		borderTopLeftRadius: 30,
+		borderTopRightRadius: 30,
+		width: "100%",
+		height: "100%",
 	},
 	button: {
-		width: 200,
+		// flex: 1,
+		width: 300,
 		margin: 10,
-	},
-	footer: {
-		flex: 1,
-		alignItems: "flex-end",
-		justifyContent: "flex-end",
-	},
-	menu: {
-		flex: 0,
-		marginRight: 10,
+		padding: 10,
+		borderRadius: 5,
+		fontSize: 18,
 	},
 });
 
 const Stack = createNativeStackNavigator();
 
 const WelcomeNavigator = () => {
+	const theme = useTheme<Theme>();
 	return (
-		<Stack.Navigator>
-			<Stack.Screen name='Welcome' component={WelcomeScreen} />
-			<Stack.Screen name='Login' component={LoginScreen} />
-			<Stack.Screen name='Register' component={RegisterScreen} />
-		</Stack.Navigator>
+		<>
+			<StatusBar />
+			<Stack.Navigator
+				screenOptions={{
+					headerStyle: {
+						backgroundColor: theme.colors.dark,
+					},
+					headerTintColor: theme.colors.light,
+					headerTitleStyle: {
+						fontWeight: "bold",
+					},
+				}}
+			>
+				<Stack.Screen
+					name='Welcome'
+					component={WelcomeScreen}
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen name='Login' component={LoginScreen} />
+				<Stack.Screen name='Register' component={RegisterScreen} />
+			</Stack.Navigator>
+		</>
 	);
 };
 
