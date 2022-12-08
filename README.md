@@ -21,4 +21,18 @@ Aplicación de utilidades de cryptomonedas construida con React Native y Typescr
 #### Android
 
 ![Android](./Frontend/assets/android-deploy.png)
+
 [Link](exp://u.expo.dev/update/f7f1346c-824d-4de4-aa2a-dee29b22b12e)
+
+# Screenshots
+
+![1](./screenshots/1.png)
+![2](./screenshots/2.png)
+![7](./screenshots/7.png)
+![3](./screenshots/3.png)
+![4](./screenshots/4.png)
+![5](./screenshots/5.png)
+![6](./screenshots/6.png)
+![8](./screenshots/8.png)
+![9](./screenshots/9.png)
+![10](./screenshots/10.png)
