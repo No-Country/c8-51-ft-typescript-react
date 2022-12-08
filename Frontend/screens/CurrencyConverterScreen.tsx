@@ -63,7 +63,6 @@ const ExchangeInput = ({
 					anchor={
 						<Button
             buttonColor={theme.colors.dark} 
-            textColor={theme.colors.light}
             onPress={openMenu}>
 							{selectedCoin ? selectedCoin.name : "Select a coin"}
 						</Button>
@@ -80,7 +79,6 @@ const ExchangeInput = ({
 									backgroundColor: theme.colors.soft,
 									...styles.contentStyle,
 								}}
-								key={item.symbol}
 								titleStyle={{ color: theme.colors.text }}
 								onPress={() => {
 									setSelectedCoin(item);

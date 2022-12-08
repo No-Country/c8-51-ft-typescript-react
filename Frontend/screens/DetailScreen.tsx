@@ -78,18 +78,17 @@ const DetailScreen = (params) => {
 				)}
 				<LineChart
 					data={{
-						labels: data
-							.map((item, index) => {
-								if (count > 5) {
-									const date = new Date(item[0]);
-									count = 0;
-									return `${date.toLocaleDateString().split("/")[1]}/${
-										date.toLocaleDateString().split("/")[0]
-									}`;
-								}
-								count++;
-								return "";
-							}),
+						labels: data.map((item, index) => {
+							if (count > 5) {
+								const date = new Date(item[0]);
+								count = 0;
+								return `${date.toLocaleDateString().split("/")[1]}/${
+									date.toLocaleDateString().split("/")[0]
+								}`;
+							}
+							count++;
+							return "";
+						}),
 						datasets: [
 							{
 								data: data.map((item) => parseFloat(item[4]) || 0),
