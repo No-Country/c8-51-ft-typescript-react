@@ -352,7 +352,7 @@ export default function PortfolioScreen() {
 							<List.Accordion
 								key={coin.symbol}
 								title={coin.symbol}
-								titleStyle={{ color: "#fff" }}
+								titleStyle={{ color: theme.colors.soft }}
 								style={{
 									backgroundColor: theme.colors.dark,
 									display: "flex",
@@ -365,7 +365,7 @@ export default function PortfolioScreen() {
 									<List.Icon
 										{...props}
 										icon={coin.name.toLowerCase()}
-										color="#fff"
+										color={theme.colors.soft}
 									/>
 								)}
 								right={(props) => (
@@ -382,20 +382,20 @@ export default function PortfolioScreen() {
 											style={{
 												alignSelf: "flex-end",
 												fontSize: 12,
-												color: "#f0d59b",
+												color: theme.colors.light,
 											}}
 										>
 											<Text style={{ fontSize: 8 }}>cant:</Text>
 											{coinAmount}
 										</Text>
 										<View>
-											<Text style={{ fontSize: 14, color: "#fff" }}>
+											<Text style={{ fontSize: 14, color: theme.colors.soft }}>
 												${coinPrice}
 											</Text>
 											<Text
 												style={{
 													fontSize: 12,
-													color: "#f0d59b",
+													color: theme.colors.light,
 													alignSelf: "flex-end",
 												}}
 											>

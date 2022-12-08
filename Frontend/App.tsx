@@ -12,6 +12,7 @@ import {
 	ThemeBase,
 	MD3LightTheme,
 	MD2LightTheme,
+	MD3DarkTheme,
 } from "react-native-paper";
 import { useState } from "react";
 import LoginScreen from "./screens/LoginScreen";
@@ -63,13 +64,31 @@ const theme = {
 		// secondary: "#ffffff",
 	},
 };
+const darkTheme = {
+	...MD3DarkTheme,
+	// Specify custom property
+	myOwnProperty: true,
+	// Specify custom property in nested object
+	colors: {
+		...MD3LightTheme.colors,
+		dark: "#fbe3ff",
+		// pastel: "#fbe3ff",
+		pastel: "#160b0b",
+		soft: "#251541",
+		light: "#b57712",
+		accent: "#0c75ae",
+		text: "#ffe5bb",
+		// primary: "#000000",
+		// secondary: "#ffffff",
+	},
+};
 
 export type Theme = typeof theme;
 
 export default function App() {
 	const [coins, setCoins] = useState<ICoin[]>([]);
 	const [showFAB, setShowFAB] = useState<boolean>(false);
-
+	const [darkMode, setDarkMode] = useState<boolean>(true);
 	const [user, setUser] = useState<User>(null);
 	// const [user, setUser] = useState<User>({
 	// 	token:
@@ -84,8 +103,18 @@ export default function App() {
 	// });
 	useFetchBinance(coins, setCoins);
 	return (
-		<PaperProvider theme={theme}>
-			<AppContext.Provider value={{ coins, setCoins, user, setUser, showFAB }}>
+		<PaperProvider theme={darkMode ? theme : darkTheme}>
+			<AppContext.Provider
+				value={{
+					coins,
+					setCoins,
+					user,
+					setUser,
+					showFAB,
+					darkMode,
+					setDarkMode,
+				}}
+			>
 				<NavigationContainer>
 					{user ? (
 						<Tab.Navigator
@@ -100,8 +129,12 @@ export default function App() {
 							}}
 							screenOptions={{
 								tabBarStyle: {
-									backgroundColor: theme.colors.pastel,
-									borderTopColor: theme.colors.pastel,
+									backgroundColor: darkMode
+										? theme.colors.pastel
+										: darkTheme.colors.pastel,
+									borderTopColor: darkMode
+										? theme.colors.pastel
+										: darkTheme.colors.pastel,
 									height: 70,
 								},
 								tabBarIconStyle: {
@@ -109,8 +142,12 @@ export default function App() {
 									color: theme.colors.soft,
 								},
 
-								tabBarActiveTintColor: theme.colors.accent,
-								tabBarInactiveTintColor: theme.colors.dark,
+								tabBarActiveTintColor: darkMode
+									? theme.colors.accent
+									: darkTheme.colors.accent,
+								tabBarInactiveTintColor: darkMode
+									? theme.colors.dark
+									: darkTheme.colors.dark,
 								tabBarShowLabel: false,
 							}}
 						>

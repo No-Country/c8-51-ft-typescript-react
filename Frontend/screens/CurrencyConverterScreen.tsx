@@ -40,20 +40,30 @@ const ExchangeInput = ({
 	const closeMenu = () => setVisible(false);
 
 	return (
-		<View style={{ flexDirection: "row", backgroundColor: theme.colors.soft }}>
+		<View style={{ flexDirection: "row",alignItems:"flex-end", backgroundColor: theme.colors.soft }}>
 			<TextInput
 				mode="outlined"
 				value={value}
 				onChangeText={(value) => OnChangeInput(value)}
 				label={selectedCoin ? `${selectedCoin.symbol} Amount` : "Amount"}
-				style={{ ...styles.textInput }}
+				style={{ ...styles.textInput, backgroundColor: theme.colors.soft }}
+				textColor={theme.colors.text}
+				outlineStyle={{ borderColor: theme.colors.dark }}
+				placeholderTextColor={theme.colors.text}
+				activeOutlineColor={theme.colors.dark}
 			/>
 			<View style={{ ...styles.menuContainer }}>
 				<Menu
 					visible={visible}
 					onDismiss={closeMenu}
+          contentStyle={{
+            backgroundColor: theme.colors.soft,
+            ...styles.contentStyle,
+          }}
 					anchor={
-						<Button onPress={openMenu}>
+						<Button
+            buttonColor={theme.colors.dark} 
+            onPress={openMenu}>
 							{selectedCoin ? selectedCoin.name : "Select a coin"}
 						</Button>
 					}
@@ -61,7 +71,16 @@ const ExchangeInput = ({
 					{data.map((item) => {
 						return (
 							<Menu.Item
+								contentStyle={{
+									backgroundColor: theme.colors.soft,
+									...styles.contentStyle,
+								}}
+								style={{
+									backgroundColor: theme.colors.soft,
+									...styles.contentStyle,
+								}}
 								key={item.symbol}
+								titleStyle={{ color: theme.colors.text }}
 								onPress={() => {
 									setSelectedCoin(item);
 									closeMenu();
@@ -203,6 +222,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 40,
 		margin: 10,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	contentStyle: {
+		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
 	},

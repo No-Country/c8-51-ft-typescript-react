@@ -8,6 +8,8 @@ interface AppContextProps {
   user: User;
   setUser: (user: User) => void;
   showFAB: boolean;
+  darkMode: boolean;
+  setDarkMode: (darkMode: boolean) => void;
 }
 
 const AppContext = createContext({} as AppContextProps);
