@@ -116,7 +116,7 @@ export default function PortfolioScreen() {
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		if (loading) {
-			console.log("loading portfolios");
+			console.log("loading portfolios", user.user[0].portfolio_id);
 			fetch(
 				"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/read",
 				{
@@ -135,28 +135,35 @@ export default function PortfolioScreen() {
 					return res.json();
 				})
 				.then((data) => {
-					console.log(data.coins[0].transactions);
+					console.log(data);
+					if (data.coins.length > 0) {
+						console.log(data.coins[0].transactions);
+						setPortfolio(
+							data.coins.map((coin) => {
+								return {
+									name: coin.name,
+									symbol: coin.symbol,
+									transactions: coin.transactions.map((transaction) => {
+										return {
+											date: new Date(transaction.date),
+											type: transaction.type,
+											amount: Number(transaction.amount),
+											price: Number(transaction.price),
+											_id: transaction._id,
+										};
+									}),
+								};
+							}),
+						);
+					} else {
+						setPortfolio([]);
+					}
 					setLoading(false);
-					setPortfolio(
-						data.coins.map((coin) => {
-							return {
-								name: coin.name,
-								symbol: coin.symbol,
-								transactions: coin.transactions.map((transaction) => {
-									return {
-										date: new Date(transaction.date),
-										type: transaction.type,
-										amount: Number(transaction.amount),
-										price: Number(transaction.price),
-										_id: transaction._id,
-									};
-								}),
-							};
-						}),
-					);
 				})
 				.catch((err) => {
 					setLoading(false);
+					setPortfolio([]);
+
 					console.log(err);
 				});
 		}
@@ -166,7 +173,6 @@ export default function PortfolioScreen() {
 	let amount;
 	let gananciaDelDia = 0;
 	if (coins.length > 0) {
-		console.log("portfolio", portfolio);
 		portfolio.forEach((item) => {
 			let totalUSDofSell = 0;
 			let totalUSDofBuy = 0;

@@ -103,7 +103,6 @@ export default function NewTransactionModal({
 		},
 		resolver: yupResolver(validationSchema),
 	});
-	console.log("initialvalues", initialValues);
 	useEffect(() => {
 		setModalCoin(initialValues.symbol || null);
 		setValue("type", initialValues.type || null);
@@ -112,16 +111,6 @@ export default function NewTransactionModal({
 		setValue("date", initialValues.date || null);
 	}, [initialValues]);
 	function addTransaction(data) {
-		console.log("submit", data);
-		console.log("json", {
-			name: namesForSymbols[modalCoin],
-			symbol: modalCoin,
-			date: data.date,
-			userID: user.user[0]._id,
-			amount: data.amount,
-			price: data.price,
-			type: data.type,
-		});
 		fetch(
 			"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/create",
 			{
@@ -145,20 +134,20 @@ export default function NewTransactionModal({
 				return res.json();
 			})
 			.then((data) => {
-				console.log(data);
+				console.log("create", data);
 				// update the portfolio_id in the user
-				setLoading(true);
 				let newUser = { ...user };
 				newUser.user[0].portfolio_id = data.portfolio_id;
 				setUser(newUser);
+				setLoading(true);
 			})
 			.catch((err) => {
+				setLoading(true);
 				console.log(err);
 			});
 		hideModal();
 	}
 	const handleDelete = () => {
-		console.log("delete");
 		fetch(
 			"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/delete",
 			{
@@ -177,12 +166,16 @@ export default function NewTransactionModal({
 				return res.json();
 			})
 			.then((data) => {
-				console.log(data);
 				hideModal();
-				setLoading(true);
+				setTimeout(() => {
+					setLoading(true);
+				}, 300);
 			})
 			.catch((err) => {
 				console.log(err);
+				setTimeout(() => {
+					setLoading(true);
+				}, 300);
 			});
 	};
 	return (
@@ -427,7 +420,7 @@ export default function NewTransactionModal({
 							style={{
 								borderRadius: 5,
 								fontSize: 18,
-                marginLeft: 5,
+								marginLeft: 5,
 							}}
 						>
 							Agregar
