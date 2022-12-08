@@ -116,7 +116,7 @@ export default function PortfolioScreen() {
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		if (loading) {
-			console.log("loading portfolios");
+			console.log("loading portfolios", user.user[0].portfolio_id);
 			fetch(
 				"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/read",
 				{
@@ -135,28 +135,35 @@ export default function PortfolioScreen() {
 					return res.json();
 				})
 				.then((data) => {
-					console.log(data.coins[0].transactions);
+					console.log(data);
+					if (data.coins.length > 0) {
+						console.log(data.coins[0].transactions);
+						setPortfolio(
+							data.coins.map((coin) => {
+								return {
+									name: coin.name,
+									symbol: coin.symbol,
+									transactions: coin.transactions.map((transaction) => {
+										return {
+											date: new Date(transaction.date),
+											type: transaction.type,
+											amount: Number(transaction.amount),
+											price: Number(transaction.price),
+											_id: transaction._id,
+										};
+									}),
+								};
+							}),
+						);
+					} else {
+						setPortfolio([]);
+					}
 					setLoading(false);
-					setPortfolio(
-						data.coins.map((coin) => {
-							return {
-								name: coin.name,
-								symbol: coin.symbol,
-								transactions: coin.transactions.map((transaction) => {
-									return {
-										date: new Date(transaction.date),
-										type: transaction.type,
-										amount: Number(transaction.amount),
-										price: Number(transaction.price),
-										_id: transaction._id,
-									};
-								}),
-							};
-						}),
-					);
 				})
 				.catch((err) => {
 					setLoading(false);
+					setPortfolio([]);
+
 					console.log(err);
 				});
 		}
@@ -166,7 +173,6 @@ export default function PortfolioScreen() {
 	let amount;
 	let gananciaDelDia = 0;
 	if (coins.length > 0) {
-		console.log("portfolio", portfolio);
 		portfolio.forEach((item) => {
 			let totalUSDofSell = 0;
 			let totalUSDofBuy = 0;
@@ -352,7 +358,7 @@ export default function PortfolioScreen() {
 							<List.Accordion
 								key={coin.symbol}
 								title={coin.symbol}
-								titleStyle={{ color: "#fff" }}
+								titleStyle={{ color: theme.colors.soft }}
 								style={{
 									backgroundColor: theme.colors.dark,
 									display: "flex",
@@ -365,7 +371,7 @@ export default function PortfolioScreen() {
 									<List.Icon
 										{...props}
 										icon={coin.name.toLowerCase()}
-										color="#fff"
+										color={theme.colors.soft}
 									/>
 								)}
 								right={(props) => (
@@ -382,20 +388,20 @@ export default function PortfolioScreen() {
 											style={{
 												alignSelf: "flex-end",
 												fontSize: 12,
-												color: "#f0d59b",
+												color: theme.colors.light,
 											}}
 										>
 											<Text style={{ fontSize: 8 }}>cant:</Text>
 											{coinAmount}
 										</Text>
 										<View>
-											<Text style={{ fontSize: 14, color: "#fff" }}>
+											<Text style={{ fontSize: 14, color: theme.colors.soft }}>
 												${coinPrice}
 											</Text>
 											<Text
 												style={{
 													fontSize: 12,
-													color: "#f0d59b",
+													color: theme.colors.light,
 													alignSelf: "flex-end",
 												}}
 											>

@@ -7,12 +7,13 @@ import {
 } from "react-native";
 import React from "react";
 import { LineChart } from "react-native-chart-kit";
-import {SafeAreaView}from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ICoin } from "../types";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ActivityIndicator, Portal, useTheme } from "react-native-paper";
 import { Theme } from "../App";
 import { StatusBar } from "expo-status-bar";
+import AppContext from "../components/AppContext";
 
 const binanceKlinesUrl = (symbol) => {
 	return `https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=1d&limit=30`;
@@ -33,6 +34,7 @@ type Kline = [
 ];
 
 const DetailScreen = (params) => {
+	const { darkMode } = React.useContext(AppContext);
 	const coin = params.route.params.coin as ICoin;
 	const [data, setData] = React.useState<Kline[]>([]);
 	const [isLoading, setIsLoading] = React.useState(true);
@@ -51,7 +53,7 @@ const DetailScreen = (params) => {
 	const Chart = () => {
 		return (
 			<>
-				<StatusBar style="inverted" />
+				<StatusBar style={darkMode ? "light" : "dark"} />
 				{isLoading && (
 					<Portal>
 						<View
@@ -91,6 +93,7 @@ const DetailScreen = (params) => {
 						datasets: [
 							{
 								data: data.map((item) => parseFloat(item[4]) || 0),
+								data: data.map((item) => parseFloat(item[4]) || 0),
 							},
 						],
 					}}
@@ -99,7 +102,6 @@ const DetailScreen = (params) => {
 					yAxisLabel="$"
 					yAxisInterval={1} // optional, defaults to 1
 					chartConfig={{
-						// backgroundColor: "#744aa5",
 						backgroundGradientFrom: "#6b226a",
 						backgroundGradientTo: "#b370ff",
 						decimalPlaces: 0, // optional, defaults to 2dp

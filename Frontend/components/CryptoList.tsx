@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Surface, Text, useTheme } from "react-native-paper";
 import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
@@ -7,6 +7,7 @@ import { Theme } from "../App";
 import { ICoin } from "../types";
 import { NavigationContext } from "@react-navigation/native";
 import { Animated, Easing } from "react-native";
+import AppContext from "./AppContext";
 
 const viewFadeIn = new Animated.Value(0);
 
@@ -53,6 +54,7 @@ interface IProps {
 export default function CryptoList(props: IProps) {
 	const { items } = props;
 	const { isFavCallback } = props;
+	const { darkMode } = useContext(AppContext);
 	const theme = useTheme<Theme>();
 	function ListItem(coin: ICoin) {
 		useEffect(() => {
@@ -102,7 +104,7 @@ export default function CryptoList(props: IProps) {
 				<View>
 					<MaterialCommunityIcons
 						name={coin.isFav ? "star" : "star-outline"}
-						color={coin.isFav ? "orange" : "black"}
+						color={coin.isFav ? "orange" : darkMode ? "black" : "white"}
 						size={20}
 						onPress={() => isFavCallback(coin.symbol)}
 					/>
@@ -113,9 +115,7 @@ export default function CryptoList(props: IProps) {
 	// We can access navigation object via context
 	const navigation = React.useContext(NavigationContext);
 	return (
-		<View
-			style={{ ...styles.container, backgroundColor: theme.colors.background }}
-		>
+		<View style={{ ...styles.container, backgroundColor: theme.colors.soft }}>
 			<Surface
 				style={{ ...styles.surface, backgroundColor: theme.colors.dark }}
 			>

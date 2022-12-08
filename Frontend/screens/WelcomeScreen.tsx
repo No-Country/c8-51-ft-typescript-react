@@ -21,7 +21,7 @@ const viewPosition = new Animated.Value(0);
 
 function WelcomeScreen() {
 	const navigation = React.useContext(NavigationContext);
-	const { setUser, user } = React.useContext(AppContext);
+	const { setUser, user, darkMode } = React.useContext(AppContext);
 	const [visible, setVisible] = React.useState(false);
 	const openMenu = () => setVisible(true);
 	const closeMenu = () => setVisible(false);
@@ -37,7 +37,7 @@ function WelcomeScreen() {
 
 	return (
 		<>
-			<StatusBar style="inverted" />
+			<StatusBar style={darkMode ? "light" : "dark"} />
 			<View
 				style={{
 					...styles.container,
@@ -81,6 +81,7 @@ function WelcomeScreen() {
 						mode='contained'
 						buttonColor={theme.colors.dark}
 						style={styles.button}
+            textColor={theme.colors.soft}
 						onPress={() => navigation.navigate("Login")}
 					>
 						Log in

@@ -29,6 +29,7 @@ import { AppbarHeader } from "react-native-paper/lib/typescript/components/Appba
 import Search from "../components/Search";
 import { useFetchNews } from "../hooks/useFetchNews";
 import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import AppContext from "../components/AppContext";
 
 interface NewsArticle {
 	tittle: string;
@@ -84,7 +85,7 @@ function NewsCard({ news, isBookmarkedCallback }) {
 		<View style={{ flex: 1, marginTop: 8 }}>
 			<Card
 				mode="elevated"
-				style={{ backgroundColor: theme.colors.soft, position: "relative" }}
+				style={{ backgroundColor: theme.colors.pastel, position: "relative" }}
 			>
 				<View style={{ position: "relative" }}>
 					{loading && (
@@ -120,7 +121,6 @@ function NewsCard({ news, isBookmarkedCallback }) {
 					>
 						{news.tittle}
 					</Title>
-					<Divider />
 					<Paragraph
 						style={{
 							color: theme.colors.text,
@@ -154,6 +154,7 @@ function NewsCard({ news, isBookmarkedCallback }) {
 }
 
 export default function NewsSceeen() {
+	const { darkMode } = React.useContext(AppContext);
 	const [onlyFav, setOnlyFav] = React.useState(false);
 	const theme = useTheme<Theme>();
 	const [searchQuery, setSearchQuery] = React.useState("");
@@ -195,7 +196,16 @@ export default function NewsSceeen() {
 						alignItems: "center",
 					}}
 				>
-					<View style={{ flex: 1 }}>
+					<View
+						style={{
+							flex: 1,
+              zIndex: 100,
+							shadowColor: "#000000",
+							shadowOffset: { width: 0, height: 5 },
+							shadowOpacity: 0.5,
+							shadowRadius: 2,
+						}}
+					>
 						<Search value={searchQuery} onChangeText={onChangeSearch} />
 					</View>
 					{/* <IconButton
@@ -204,10 +214,10 @@ export default function NewsSceeen() {
 						onPress={onToggleFav}
 					/> */}
 				</View>
-				<Divider style={{ height: 2, backgroundColor: theme.colors.pastel }} />
+				{/* <Divider style={{ height: 2, backgroundColor: theme.colors.pastel }} /> */}
 				<FlatList
 					style={{
-						backgroundColor: theme.colors.soft,
+						backgroundColor: darkMode ? theme.colors.soft : "#000",
 						minHeight: 1000,
 					}}
 					data={newsArticles}

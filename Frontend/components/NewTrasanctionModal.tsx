@@ -65,14 +65,7 @@ export default function NewTransactionModal({
 		contentStyle: {
 			display: "flex",
 			justifyContent: "center",
-			// width: 200,
 			alignItems: "center",
-			// textAlign: "center",
-			// borderRadius: 2,
-			// padding: 20,
-			// // width: "100%",
-			// width: 240,
-			// padding: 20,
 		},
 		menuTouchable: {
 			display: "flex",
@@ -110,7 +103,6 @@ export default function NewTransactionModal({
 		},
 		resolver: yupResolver(validationSchema),
 	});
-	console.log("initialvalues", initialValues);
 	useEffect(() => {
 		setModalCoin(initialValues.symbol || null);
 		setValue("type", initialValues.type || null);
@@ -119,16 +111,6 @@ export default function NewTransactionModal({
 		setValue("date", initialValues.date || null);
 	}, [initialValues]);
 	function addTransaction(data) {
-		console.log("submit", data);
-		console.log("json", {
-			name: namesForSymbols[modalCoin],
-			symbol: modalCoin,
-			date: data.date,
-			userID: user.user[0]._id,
-			amount: data.amount,
-			price: data.price,
-			type: data.type,
-		});
 		fetch(
 			"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/create",
 			{
@@ -152,20 +134,20 @@ export default function NewTransactionModal({
 				return res.json();
 			})
 			.then((data) => {
-				console.log(data);
+				console.log("create", data);
 				// update the portfolio_id in the user
-				setLoading(true);
 				let newUser = { ...user };
 				newUser.user[0].portfolio_id = data.portfolio_id;
 				setUser(newUser);
+				setLoading(true);
 			})
 			.catch((err) => {
+				setLoading(true);
 				console.log(err);
 			});
 		hideModal();
 	}
 	const handleDelete = () => {
-		console.log("delete");
 		fetch(
 			"https://c8-51-ft-typescript-react-production.up.railway.app/api/portfolio/delete",
 			{
@@ -184,12 +166,16 @@ export default function NewTransactionModal({
 				return res.json();
 			})
 			.then((data) => {
-				console.log(data);
 				hideModal();
-				setLoading(true);
+				setTimeout(() => {
+					setLoading(true);
+				}, 300);
 			})
 			.catch((err) => {
 				console.log(err);
+				setTimeout(() => {
+					setLoading(true);
+				}, 300);
 			});
 	};
 	return (
@@ -212,14 +198,20 @@ export default function NewTransactionModal({
 						alignItems: "center",
 					}}
 				>
-					<Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 5 }}>
+					<Text
+						style={{
+							fontSize: 20,
+							fontWeight: "bold",
+							marginBottom: 5,
+							color: theme.colors.text,
+						}}
+					>
 						Agregar Transacción
 					</Text>
 					<View
 						style={{
 							display: "flex",
 							flexDirection: "row",
-							// justifyContent: "space-between",
 							alignItems: "flex-end",
 							marginVertical: 10,
 						}}
@@ -233,12 +225,12 @@ export default function NewTransactionModal({
 									onPress={() => setMenuSymbolVisible(true)}
 									style={styles.menuTouchable}
 								>
-									<Text style={{ color: "#fff" }}>
+									<Text style={{ color: theme.colors.text }}>
 										{modalCoin ? modalCoin : "Seleccionar"}
 									</Text>
 									<Text
 										style={{
-											color: "#fff",
+											color: theme.colors.text,
 											display: modalCoin ? "none" : "flex",
 										}}
 									>
@@ -250,6 +242,7 @@ export default function NewTransactionModal({
 							{coins.map((coin) => (
 								<Menu.Item
 									key={coin.symbol}
+									titleStyle={{ color: theme.colors.text }}
 									onPress={() => {
 										setModalCoin(coin.symbol);
 										setMenuSymbolVisible(false);
@@ -276,8 +269,18 @@ export default function NewTransactionModal({
 								<TextInput
 									mode="outlined"
 									label={"Fecha"}
-									style={{ width: 100, height: 50, marginLeft: 10 }}
+									style={{
+										width: 100,
+										height: 50,
+										marginLeft: 10,
+										backgroundColor: theme.colors.soft,
+										// color: theme.colors.light,
+									}}
 									onChangeText={onChange}
+									textColor={theme.colors.text}
+									outlineStyle={{ borderColor: theme.colors.dark }}
+									placeholderTextColor={theme.colors.text}
+									activeOutlineColor={theme.colors.dark}
 									value={value}
 									placeholder="Fecha"
 								/>
@@ -346,7 +349,16 @@ export default function NewTransactionModal({
 									<TextInput
 										mode="outlined"
 										label={"Precio"}
-										style={{ width: 100 }}
+										style={{
+											width: 100,
+											height: 50,
+											marginRight: 5,
+											backgroundColor: theme.colors.soft,
+										}}
+										textColor={theme.colors.text}
+										outlineStyle={{ borderColor: theme.colors.dark }}
+										placeholderTextColor={theme.colors.text}
+										activeOutlineColor={theme.colors.dark}
 										onChangeText={onChange}
 										value={value}
 										placeholder="Precio"
@@ -372,7 +384,16 @@ export default function NewTransactionModal({
 									<TextInput
 										mode="outlined"
 										label={"Cantidad"}
-										style={{ width: 100 }}
+										style={{
+											width: 100,
+											height: 50,
+											marginLeft: 0,
+											backgroundColor: theme.colors.soft,
+										}}
+										textColor={theme.colors.text}
+										outlineStyle={{ borderColor: theme.colors.dark }}
+										placeholderTextColor={theme.colors.text}
+										activeOutlineColor={theme.colors.dark}
 										onChangeText={onChange}
 										value={value}
 										placeholder="Cantidad"
@@ -399,6 +420,7 @@ export default function NewTransactionModal({
 							style={{
 								borderRadius: 5,
 								fontSize: 18,
+								marginLeft: 5,
 							}}
 						>
 							Agregar
@@ -410,7 +432,7 @@ export default function NewTransactionModal({
 							textColor={theme.colors.light}
 							mode="contained"
 							buttonColor={theme.colors.dark}
-							style={{ borderRadius: 5, fontSize: 18 }}
+							style={{ borderRadius: 5, fontSize: 18, marginLeft: 5 }}
 						>
 							Cancelar
 						</Button>
@@ -422,7 +444,6 @@ export default function NewTransactionModal({
 							mode="contained"
 							buttonColor={theme.colors.dark}
 							style={{
-								margin: 10,
 								borderRadius: 5,
 								fontSize: 18,
 							}}
