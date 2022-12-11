@@ -8,7 +8,7 @@ Aplicación de utilidades de cryptomonedas construida con React Native y Typescr
 
 ## Miembros
 
-- [Gabriel Ruiz Varela](www.github.com/GabrielRuizVarela) - Fullstack Developer
+- [Gabriel Ruiz Varela](https://github.com/GabrielRuizVarela) - Fullstack Developer
 
 ### Deployment
 
