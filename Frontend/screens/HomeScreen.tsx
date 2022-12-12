@@ -72,9 +72,9 @@ function Home() {
 				}),
 			);
 			fetch(
-				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/",
+				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/delete/",
 				{
-					method: "DELETE",
+					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
@@ -100,7 +100,7 @@ function Home() {
 			}),
 		);
 		fetch(
-			"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/",
+			"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/create",
 			{
 				method: "POST",
 				headers: {
@@ -118,9 +118,13 @@ function Home() {
 	};
 	useEffect(() => {
 		if (loading && coins.length > 0) {
-			fetch(
-				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs",
-			)
+			fetch("https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/read", {
+				method: "POST",
+				body: JSON.stringify({ userID: user.user[0]._id }),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			})
 				.then((res) => res.json())
 				.then((data) => {
 					if (!data.message) {
