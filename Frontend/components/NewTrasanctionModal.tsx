@@ -75,8 +75,6 @@ export default function NewTransactionModal({
 			backgroundColor: theme.colors.pastel,
 			height: 52,
 			width: 100,
-			// borderRadius: 10,
-			// margin: 10,
 		},
 	});
 	const containerStyle = {
@@ -135,7 +133,6 @@ export default function NewTransactionModal({
 			})
 			.then((data) => {
 				console.log("create", data);
-				// update the portfolio_id in the user
 				let newUser = { ...user };
 				newUser.user[0].portfolio_id = data.portfolio_id;
 				setUser(newUser);
@@ -345,7 +342,7 @@ export default function NewTransactionModal({
 								name="price"
 								control={control}
 								rules={{ required: true }}
-								render={({ field: { onChange, onBlur, value } }) => (
+								render={({ field: { onChange, value } }) => (
 									<TextInput
 										mode="outlined"
 										label={"Precio"}
@@ -380,7 +377,7 @@ export default function NewTransactionModal({
 								name="amount"
 								control={control}
 								rules={{ required: true }}
-								render={({ field: { onChange, onBlur, value } }) => (
+								render={({ field: { onChange, value } }) => (
 									<TextInput
 										mode="outlined"
 										label={"Cantidad"}

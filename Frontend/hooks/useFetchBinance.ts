@@ -57,7 +57,6 @@ export function useFetchBinance(allCoins, setAllCoins) {
     console.log('fetch');
     fetch(
       url,
-      // 'https://api.binance.com/api/v3/ticker/24hr?symbols=[%22BTCUSDT%22,%22BNBUSDT%22,%22ETHUSDT%22,%22ADAUSDT%22,%22LTCUSDT%22]',
       {
         method: 'GET',
         headers: {

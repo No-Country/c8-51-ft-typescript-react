@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
-import { Menu, Searchbar, ThemeProvider, useTheme } from "react-native-paper";
+import { Menu, Searchbar, useTheme } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppContext from "./AppContext";
 import { Theme } from "../App";
@@ -25,7 +25,6 @@ export default function Search(props: SearchProps) {
 				style={{
 					display: "flex",
 					flexDirection: "row",
-					// justifyContent: "center",
 					alignItems: "center",
 					backgroundColor: theme.colors.soft,
 				}}
@@ -47,7 +46,6 @@ export default function Search(props: SearchProps) {
 					visible={visible}
 					onDismiss={closeMenu}
 					contentStyle={{ backgroundColor: theme.colors.soft }}
-					// style={{ backgroundColor: theme.colors.soft}}
 					anchor={
 						<TouchableOpacity
 							style={{ flex: 0, marginRight: 10 }}
@@ -67,7 +65,6 @@ export default function Search(props: SearchProps) {
 						title="Settings"
 						trailingIcon='cog'
 					/>
-					{/* dark mode selector */}
 					<Menu.Item
 						onPress={() => {
 							setDarkMode(!darkMode);
@@ -81,7 +78,6 @@ export default function Search(props: SearchProps) {
 						onPress={() => setUser(null)}
 						title='Log out'
 					/>
-					{/* <Menu.Item onPress={() => {}} title='Item 2' /> */}
 				</Menu>
 			</View>
 		</>

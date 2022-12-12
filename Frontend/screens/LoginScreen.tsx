@@ -13,8 +13,6 @@ import { useForm, Controller, set } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import AppContext from "../components/AppContext";
-import { StatusBar } from "expo-status-bar";
-import { ThemeProvider } from "@react-navigation/native";
 import { Theme } from "../App";
 import { Animated, Easing } from "react-native";
 

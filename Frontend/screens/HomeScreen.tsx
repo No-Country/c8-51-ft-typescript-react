@@ -6,45 +6,15 @@ import { ICoin } from "../types";
 import DetailScreen from "./DetailScreen";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
-	Button,
-	IconButton,
-	Searchbar,
-	Surface,
 	useTheme,
-	withTheme,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 const Tab = createMaterialTopTabNavigator();
 
 const Stack = createNativeStackNavigator();
-
-const cryptoJson: ICoin[] = [
-	{
-		name: "Bitcoin",
-		symbol: "BTC",
-		price: 15100.12,
-		change24h: 10.5,
-		isFav: true,
-	},
-	{
-		name: "Ethereum",
-		symbol: "ETH",
-		price: 400.51,
-		change24h: -2.5,
-		isFav: false,
-	},
-	{
-		name: "Litecoin",
-		symbol: "LTC",
-		price: 100,
-		change24h: 0.5,
-		isFav: false,
-	},
-];
 
 const filterCoins = (coins: ICoin[], query: string) => {
 	if (query === "") {

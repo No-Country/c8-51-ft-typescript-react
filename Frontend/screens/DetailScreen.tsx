@@ -1,3 +1,8 @@
+import { Theme } from "../App";
+import AppContext from "../components/AppContext";
+import { ICoin } from "../types";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
 import {
 	Dimensions,
 	StyleSheet,
@@ -5,15 +10,10 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React from "react";
 import { LineChart } from "react-native-chart-kit";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ICoin } from "../types";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ActivityIndicator, Portal, useTheme } from "react-native-paper";
-import { Theme } from "../App";
-import { StatusBar } from "expo-status-bar";
-import AppContext from "../components/AppContext";
+import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const binanceKlinesUrl = (symbol) => {
 	return `https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=1d&limit=30`;
@@ -91,7 +91,6 @@ const DetailScreen = (params) => {
 						}),
 						datasets: [
 							{
-								data: data.map((item) => parseFloat(item[4]) || 0),
 								data: data.map((item) => parseFloat(item[4]) || 0),
 							},
 						],
@@ -290,7 +289,6 @@ const styles = StyleSheet.create({
 		display: "flex",
 		height: "100%",
 		flexDirection: "column",
-		// backgroundColor: "#fff",
 		alignItems: "center",
 		justifyContent: "flex-start",
 	},

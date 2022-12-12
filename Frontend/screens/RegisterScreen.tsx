@@ -4,7 +4,6 @@ import {
 	TextInput,
 	Button,
 	HelperText,
-	withTheme,
 	ActivityIndicator,
 	Portal,
 	useTheme,
@@ -62,7 +61,7 @@ export default function RegisterScreen() {
 		resolver: yupResolver(validationSchema),
 	});
 	const navigation = useContext(NavigationContext);
-	// define the submit handler
+ 
 	const onSubmit = (data) => {
 		setLoading(true);
 		fetch(

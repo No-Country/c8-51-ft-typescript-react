@@ -1,30 +1,20 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Button, Menu, Searchbar, useTheme } from "react-native-paper";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { Theme } from "../App";
 import AppContext from "../components/AppContext";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./LoginScreen";
 import RegisterScreen from "./RegisterScreen";
-import {
-	NavigationContext,
-	ThemeProvider,
-	useNavigation,
-} from "@react-navigation/native";
-import { Header } from "react-native/Libraries/NewAppScreen";
+import { NavigationContext } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { Theme } from "../App";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { Animated, Easing } from "react-native";
+import { Button, useTheme } from "react-native-paper";
 
 const viewPosition = new Animated.Value(0);
-// a welcome screen for a react native app, with a login and register button, using react-native-paper, typescript
 
 function WelcomeScreen() {
 	const navigation = React.useContext(NavigationContext);
-	const { setUser, user, darkMode } = React.useContext(AppContext);
-	const [visible, setVisible] = React.useState(false);
-	const openMenu = () => setVisible(true);
-	const closeMenu = () => setVisible(false);
+	const { darkMode } = React.useContext(AppContext);
 	const theme = useTheme<Theme>();
 	useEffect(() => {
 		Animated.timing(viewPosition, {
@@ -81,7 +71,7 @@ function WelcomeScreen() {
 						mode='contained'
 						buttonColor={theme.colors.dark}
 						style={styles.button}
-            textColor={theme.colors.soft}
+						textColor={theme.colors.soft}
 						onPress={() => navigation.navigate("Login")}
 					>
 						Log in
@@ -143,7 +133,6 @@ const styles = StyleSheet.create({
 		height: "100%",
 	},
 	button: {
-		// flex: 1,
 		width: 300,
 		margin: 10,
 		padding: 10,

@@ -1,19 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useContext, useEffect, useState } from "react";
-import { ICoin } from "../types";
-import Search from "../components/Search";
-import {
-	TextInput,
-	List,
-	ThemeProvider,
-	useTheme,
-	Menu,
-	Divider,
-	Button,
-} from "react-native-paper";
 import { Theme } from "../App";
 import AppContext from "../components/AppContext";
+import Search from "../components/Search";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Button, Menu, TextInput, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type currencyItem = {
 	name: string;
@@ -40,7 +31,13 @@ const ExchangeInput = ({
 	const closeMenu = () => setVisible(false);
 
 	return (
-		<View style={{ flexDirection: "row",alignItems:"flex-end", backgroundColor: theme.colors.soft }}>
+		<View
+			style={{
+				flexDirection: "row",
+				alignItems: "flex-end",
+				backgroundColor: theme.colors.soft,
+			}}
+		>
 			<TextInput
 				mode="outlined"
 				value={value}
@@ -56,14 +53,12 @@ const ExchangeInput = ({
 				<Menu
 					visible={visible}
 					onDismiss={closeMenu}
-          contentStyle={{
-            backgroundColor: theme.colors.soft,
-            ...styles.contentStyle,
-          }}
+					contentStyle={{
+						backgroundColor: theme.colors.soft,
+						...styles.contentStyle,
+					}}
 					anchor={
-						<Button
-            buttonColor={theme.colors.dark} 
-            onPress={openMenu}>
+						<Button buttonColor={theme.colors.dark} onPress={openMenu}>
 							{selectedCoin ? selectedCoin.name : "Select a coin"}
 						</Button>
 					}
@@ -96,7 +91,7 @@ const ExchangeInput = ({
 export default function CurrencyConverterScreen() {
 	const theme = useTheme<Theme>();
 	const [searchQuery, setSearchQuery] = useState("");
-	const { coins, setCoins } = useContext(AppContext);
+	const { coins } = useContext(AppContext);
 	const data = coins.map((item) => {
 		return { name: item.symbol, symbol: item.symbol };
 	});
@@ -107,7 +102,6 @@ export default function CurrencyConverterScreen() {
 	const [secondSelectedCoin, setSecondSelectedCoin] =
 		useState<currencyItem>(null);
 	const [secondCoinValue, setSecondCoinValue] = useState("");
-	const [currency, setCurrency] = useState("USD");
 	const [currencyValue, setCurrencyValue] = useState("");
 
 	const OnChangeFirstInput = (value: string) => {
@@ -196,7 +190,6 @@ export default function CurrencyConverterScreen() {
 						style={{
 							margin: 10,
 							fontSize: 20,
-							// backgroundColor: theme.colors.dark,
 							color: theme.colors.light,
 						}}
 					>

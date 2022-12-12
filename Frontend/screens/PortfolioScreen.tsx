@@ -8,7 +8,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
-import { ICoin } from "../types";
 import {
 	ActivityIndicator,
 	FAB,
@@ -18,6 +17,7 @@ import {
 } from "react-native-paper";
 import NewTransactionModal from "../components/NewTrasanctionModal";
 import { Theme } from "../App";
+
 export interface Transaction {
 	date: Date;
 	type: "buy" | "sell";
@@ -30,58 +30,11 @@ export type Portfolio = {
 	transactions: Transaction[];
 }[];
 
-const PortfolioJson: Portfolio = [
-	{
-		name: "Bitcoin",
-		symbol: "BTC",
-		transactions: [
-			{
-				date: new Date(2020, 1, 1),
-				type: "buy",
-				amount: 1,
-				price: 10000,
-			},
-			{
-				date: new Date(2021, 1, 2),
-				type: "sell",
-				amount: 0.5,
-				price: 20000,
-			},
-			{
-				date: new Date(2022, 1, 3),
-				type: "buy",
-				amount: 1,
-				price: 15000,
-			},
-		],
-	},
-	{
-		name: "Ethereum",
-		symbol: "ETH",
-		transactions: [
-			{
-				date: new Date(2020, 1, 1),
-				type: "buy",
-				amount: 1,
-				price: 400,
-			},
-			{
-				date: new Date(2021, 1, 2),
-				type: "sell",
-				amount: 0.5,
-				price: 4000,
-			},
-		],
-	},
-];
-
 export default function PortfolioScreen() {
 	const theme = useTheme<Theme>();
 	const styles = StyleSheet.create({
 		container: {
-			// flex: 1,
 			backgroundColor: "#cc3e82",
-			// alignItems: "center",
 			justifyContent: "center",
 			width: "80%",
 			alignSelf: "center",
@@ -126,7 +79,6 @@ export default function PortfolioScreen() {
 						cors: "no-cors",
 					},
 					body: JSON.stringify({
-						// userID: user.user[0].portfolio_id,
 						portfolioID: user.user[0].portfolio_id,
 					}),
 				},

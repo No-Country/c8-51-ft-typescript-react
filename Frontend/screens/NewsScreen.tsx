@@ -2,33 +2,21 @@ import {
 	View,
 	StyleSheet,
 	TouchableOpacity,
-	ScrollViewComponent,
-	ScrollView,
 	Linking,
 	FlatList,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import {
 	useTheme,
-	Button,
-	withTheme,
 	Card,
 	Title,
 	Paragraph,
-	IconButton,
-	Appbar,
-	Searchbar,
 	ActivityIndicator,
-	Divider,
 } from "react-native-paper";
 import { Theme } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React, { useEffect } from "react";
-import { AppbarHeader } from "react-native-paper/lib/typescript/components/Appbar/AppbarHeader";
+import React  from "react";
 import Search from "../components/Search";
 import { useFetchNews } from "../hooks/useFetchNews";
-import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import AppContext from "../components/AppContext";
 
 interface NewsArticle {
@@ -40,37 +28,6 @@ interface NewsArticle {
 	id: number;
 }
 
-const NewsJson = [
-	{
-		tittle: "Bitcoin surges to the moon",
-		paragraph:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		image_url: "https://picsum.photos/400",
-		isFav: true,
-		id: 1,
-		url: "https://www.google.com",
-	},
-	{
-		tittle: "Ethereum surges to the moon",
-		paragraph:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		// picsum image
-		image_url: "https://picsum.photos/500",
-		isFav: false,
-		id: 2,
-		url: "https://www.google.com",
-	},
-	{
-		tittle: "Litecoin surges to the moon",
-		paragraph:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		image_url: "https://picsum.photos/700",
-		isFav: false,
-		id: 3,
-		url: "https://www.google.com",
-	},
-];
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -80,7 +37,6 @@ const styles = StyleSheet.create({
 function NewsCard({ news, isBookmarkedCallback }) {
 	const theme = useTheme<Theme>();
 	const [loading, setLoading] = React.useState(true);
-	// const [isBookmarked, setIsBookmarked] = React.useState(news.isFav);
 	return (
 		<View style={{ flex: 1, marginTop: 8 }}>
 			<Card
@@ -97,8 +53,6 @@ function NewsCard({ news, isBookmarkedCallback }) {
 								left: 0,
 								right: 0,
 								bottom: 0,
-								// alignItems: "center",
-								// justifyContent: "center",
 							}}
 							size="large"
 							color={theme.colors.dark}
@@ -139,14 +93,6 @@ function NewsCard({ news, isBookmarkedCallback }) {
 						top: 0,
 					}}
 				>
-					{/* <IconButton
-						icon={isBookmarked ? "bookmark" : "bookmark-outline"}
-						iconColor={theme.colors.light}
-						onPress={() => {
-							setIsBookmarked(!isBookmarked);
-							isBookmarkedCallback(news.id);
-						}}
-					/> */}
 				</View>
 			</Card>
 		</View>
@@ -155,7 +101,6 @@ function NewsCard({ news, isBookmarkedCallback }) {
 
 export default function NewsSceeen() {
 	const { darkMode } = React.useContext(AppContext);
-	const [onlyFav, setOnlyFav] = React.useState(false);
 	const theme = useTheme<Theme>();
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [loading, setLoading] = React.useState(true);
@@ -208,13 +153,7 @@ export default function NewsSceeen() {
 					>
 						<Search value={searchQuery} onChangeText={onChangeSearch} />
 					</View>
-					{/* <IconButton
-						icon='bookmark'
-						iconColor={onlyFav ? theme.colors.dark : theme.colors.primary}
-						onPress={onToggleFav}
-					/> */}
 				</View>
-				{/* <Divider style={{ height: 2, backgroundColor: theme.colors.pastel }} /> */}
 				<FlatList
 					style={{
 						backgroundColor: darkMode ? theme.colors.soft : "#000",

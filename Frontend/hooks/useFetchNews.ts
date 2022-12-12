@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { NEWS_KEY } from '@env';
+import { useEffect } from 'react';
 const timer = 1000 * 60 * 5; // 5 minutes
 
 export function useFetchNews(loading, setLoading, setNewsArticles, page) {

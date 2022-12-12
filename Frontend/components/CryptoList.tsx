@@ -1,13 +1,12 @@
-import React, { useContext, useEffect } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Surface, Text, useTheme } from "react-native-paper";
-import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Theme } from "../App";
 import { ICoin } from "../types";
-import { NavigationContext } from "@react-navigation/native";
-import { Animated, Easing } from "react-native";
 import AppContext from "./AppContext";
+import { NavigationContext } from "@react-navigation/native";
+import React, { useContext, useEffect } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Animated, Easing } from "react-native";
+import { Surface, Text, useTheme } from "react-native-paper";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const viewFadeIn = new Animated.Value(0);
 
@@ -112,7 +111,6 @@ export default function CryptoList(props: IProps) {
 			</Surface>
 		);
 	}
-	// We can access navigation object via context
 	const navigation = React.useContext(NavigationContext);
 	return (
 		<View style={{ ...styles.container, backgroundColor: theme.colors.soft }}>
