@@ -1,23 +1,23 @@
-import { useContext, useEffect, useState } from "react";
+import { Theme } from "../App";
+import AppContext from "../components/AppContext";
+import CryptoList from "../components/CryptoList";
+import Search from "../components/Search";
+import { ICoin } from "../types";
+import DetailScreen from "./DetailScreen";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
+import { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import {
 	Button,
-	Searchbar,
-	withTheme,
-	Surface,
 	IconButton,
+	Searchbar,
+	Surface,
 	useTheme,
+	withTheme,
 } from "react-native-paper";
-import {SafeAreaView}from 'react-native-safe-area-context';
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Theme } from "../App";
-import { ICoin } from "../types";
-import CryptoList from "../components/CryptoList";
-import Search from "../components/Search";
-import AppContext from "../components/AppContext";
-import DetailScreen from "./DetailScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 const Tab = createMaterialTopTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -119,14 +119,7 @@ function Home() {
 	useEffect(() => {
 		if (loading && coins.length > 0) {
 			fetch(
-				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs/",
-				{
-					method: "GET", //should be get
-					body: JSON.stringify({ userID: user.user[0]._id }),
-					headers: {
-						"Content-Type": "application/json",
-					},
-				},
+				"https://c8-51-ft-typescript-react-production.up.railway.app/api/favs",
 			)
 				.then((res) => res.json())
 				.then((data) => {
@@ -164,7 +157,7 @@ function Home() {
 				<Search onChangeText={onChangeSearch} value={searchQuery} />
 				<View style={styles.containerContainer}>
 					<Tab.Navigator
-            initialRouteName='All'
+						initialRouteName='All'
 						screenOptions={{
 							tabBarActiveTintColor: theme.colors.accent,
 							tabBarInactiveTintColor: theme.colors.light,
@@ -224,7 +217,7 @@ const StackNavigator = () => {
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
-				options={{ headerShown: true}}
+				options={{ headerShown: true }}
 				name="Detail"
 				component={DetailScreen}
 			/>
